@@ -1,0 +1,330 @@
+﻿@model IEnumerable<WebsiteNoiThat.Models.InventoryViewModel>
+
+@{
+    string warehouseName = ViewBag.WarehouseName ?? "Kho Hàng";
+    ViewBag.Title = "Tồn kho: " + warehouseName;
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    // Tính toán thống kê tổng quan
+    int totalProducts = Model != null ? Model.Count() : 0;
+    int totalQuantity = Model != null ? Model.Sum(x => x.CurrentQuantity) : 0;
+    decimal totalValue = Model != null ? Model.Sum(x => x.TotalValue) : 0;
+    int lowStockCount = Model != null ? Model.Count(x => x.CurrentQuantity < 5) : 0;
+}
+
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-boxes"></i> Tồn Kho Chi Tiết: <span class="text-primary">@warehouseName</span>
+        </h1>
+        <a href="@Url.Action("Index", "Warehouse")" class="btn btn-sm btn-outline-secondary shadow-sm">
+            <i class="fas fa-arrow-left"></i> Trở về Danh sách Kho
+        </a>
+    </div>
+
+    <!-- Thống kê tổng quan -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Tổng sản phẩm
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@totalProducts</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-cubes fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Tổng số lượng
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@totalQuantity.ToString("N0")</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-box fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Tổng giá trị tồn
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@totalValue.ToString("N0") ₫</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Sản phẩm sắp hết
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@lowStockCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng chi tiết tồn kho -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách sản phẩm tồn kho</h6>
+            <div>
+                <button class="btn btn-sm btn-success" onclick="window.print()">
+                    <i class="fas fa-print"></i> In báo cáo
+                </button>
+                <button class="btn btn-sm btn-info" onclick="exportToExcel()">
+                    <i class="fas fa-file-excel"></i> Xuất Excel
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th width="8%">SKU</th>
+                            <th width="25%">Tên Sản phẩm</th>
+                            <th width="15%">Biến thể</th>
+                            <th width="10%" class="text-center">Số lượng Tồn</th>
+                            <th width="13%" class="text-right">Giá vốn (Giá gốc)</th>
+                            <th width="13%" class="text-right">Giá bán</th>
+                            <th width="10%" class="text-center">Lợi nhuận</th>
+                            @*<th width="6%" class="text-center">Hành động</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                int currentQuantity = item.CurrentQuantity;
+                                decimal profit = item.SalePrice - item.AverageCost;
+                                decimal profitPercent = item.AverageCost > 0 ? (profit / item.AverageCost) * 100 : 0;
+
+                                <tr class="@(currentQuantity < 5 ? "table-danger" : "")">
+                                    <td><strong class="text-dark">@item.ProductCode</strong></td>
+                                    <td>
+                                        <div class="font-weight-bold">@item.ProductName</div>
+                                        <small class="text-muted">Giá trị tồn: @item.TotalValue.ToString("N0") ₫</small>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.VariantName))
+                                        {
+                                            <span class="badge badge-secondary">@item.VariantName</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Mặc định</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="font-weight-bold
+                                            @(currentQuantity < 5 ? "text-danger" : (currentQuantity < 20 ? "text-warning" : "text-success"))">
+                                            @currentQuantity
+                                        </span>
+                                        @if (currentQuantity < 5)
+                                        {
+                                            <br />
+                                            <small class="badge badge-danger">Sắp hết</small>
+                                        }
+                                        else if (currentQuantity < 20)
+                                        {
+                                            <br />
+                                            <small class="badge badge-warning">Cảnh báo</small>
+                                        }
+                                    </td>
+                                    <td class="text-right">
+                                        <span class="text-muted">@item.AverageCost.ToString("N0") ₫</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <strong class="text-primary">@item.SalePrice.ToString("N0") ₫</strong>
+                                        @if (item.SalePrice != item.AverageCost)
+                                        {
+                                            <br />
+                                            <small class="text-muted">
+                                                <del>@item.AverageCost.ToString("N0") ₫</del>
+                                            </small>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (profit > 0)
+                                        {
+                                            <span class="badge badge-success badge-pill">
+                                                +@profitPercent.ToString("N1")%
+                                            </span>
+                                            <br />
+                                            <small class="text-success">+@profit.ToString("N0") ₫</small>
+                                        }
+                                        else if (profit < 0)
+                                        {
+                                            <span class="badge badge-danger badge-pill">
+                                                @profitPercent.ToString("N1")%
+                                            </span>
+                                            <br />
+                                            <small class="text-danger">@profit.ToString("N0") ₫</small>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-secondary badge-pill">0%</span>
+                                        }
+                                    </td>
+                                    @*<td class="text-center">
+                                        <a href="@Url.Action("Index", "StockHistory", new { warehouseId = item.WarehouseId, variantId = item.VariantId })"
+                                           class="btn btn-sm btn-outline-info"
+                                           title="Xem lịch sử nhập/xuất"
+                                           data-toggle="tooltip">
+                                            <i class="fas fa-history"></i>
+                                        </a>
+                                    </td>*@
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-muted">
+                                    <i class="fas fa-box-open fa-3x mb-3 d-block text-gray-300"></i>
+                                    <h5>Kho hàng này hiện không có sản phẩm tồn kho.</h5>
+                                    <p>Hãy thêm sản phẩm vào kho để bắt đầu quản lý.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        <tfoot class="thead-light">
+                            <tr>
+                                <th colspan="3" class="text-right">TỔNG CỘNG:</th>
+                                <th class="text-center font-weight-bold text-primary">@totalQuantity.ToString("N0")</th>
+                                <th colspan="2" class="text-right font-weight-bold text-info">@totalValue.ToString("N0") ₫</th>
+                                <th colspan="2"></th>
+                            </tr>
+                        </tfoot>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Content/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/Content/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Khởi tạo DataTable
+            if ($.fn.DataTable.isDataTable('#dataTable')) {
+                $('#dataTable').DataTable().destroy();
+            }
+
+            $('#dataTable').DataTable({
+                order: [[3, "asc"]], // Sắp xếp theo số lượng tồn tăng dần (hiển thị sản phẩm sắp hết trước)
+                columnDefs: [
+                    { orderable: false, targets: 7 } // Không cho sắp xếp cột hành động
+                ],
+                language: {
+                    sProcessing: "Đang xử lý...",
+                    sLengthMenu: "Xem _MENU_ mục",
+                    sZeroRecords: "Không tìm thấy dòng nào phù hợp",
+                    sInfo: "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    sInfoEmpty: "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    sInfoFiltered: "(được lọc từ _MAX_ mục)",
+                    sSearch: "Tìm kiếm:",
+                    oPaginate: {
+                        sFirst: "Đầu",
+                        sPrevious: "Trước",
+                        sNext: "Tiếp",
+                        sLast: "Cuối"
+                    }
+                },
+                pageLength: 25 // Hiển thị 25 dòng mỗi trang
+            });
+
+            // Kích hoạt tooltip
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // Hàm xuất Excel
+        function exportToExcel() {
+            // Lấy bảng
+            var table = document.getElementById('dataTable');
+            var wb = XLSX.utils.table_to_book(table, { sheet: "Tồn kho" });
+
+            // Xuất file
+            var fileName = 'TonKho_@(warehouseName)_@DateTime.Now.ToString("ddMMyyyy")' + '.xlsx';
+            XLSX.writeFile(wb, fileName);
+        }
+
+        // Thêm thư viện XLSX nếu chưa có
+        if (typeof XLSX === 'undefined') {
+            var script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+            document.head.appendChild(script);
+        }
+    </script>
+
+    <style>
+        /* Style cho in ấn */
+        @@media print {
+            .btn, .card-header button, .no-print {
+                display: none !important;
+            }
+
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            .table {
+                font-size: 12px;
+            }
+        }
+
+        /* Làm nổi bật hàng cảnh báo */
+        .table-danger {
+            background-color: #f8d7da !important;
+        }
+
+        /* Badge style */
+        .badge-pill {
+            padding: 0.35em 0.65em;
+            font-size: 0.85em;
+        }
+    </style>
+}

@@ -1,0 +1,222 @@
+﻿@model WebsiteNoiThat.Models.ProductViewModel
+
+@{
+    ViewBag.Title = "Sửa sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Sửa thông tin sản phẩm</h2>
+
+@using (Html.BeginForm("Edit", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+
+        @* HIỂN THỊ CHI TIẾT LỖI *@
+        @if (ViewBag.ErrorDetail != null)
+        {
+            <div class="alert alert-danger">
+                <strong><i class="fas fa-exclamation-triangle"></i> Chi tiết lỗi:</strong><br />
+                @Html.Raw(ViewBag.ErrorDetail)
+            </div>
+        }
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.ProductId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, "Tên sản phẩm", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CateId, "Danh mục", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.CateId, ViewBag.ListCate as SelectList, "--- Chọn danh mục ---", new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.CateId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Price, "Giá bán (VNĐ)", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Quantity, "Số lượng kho", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="number"
+                       class="form-control"
+                       value="@Model.Quantity"
+                       readonly
+                       style="background-color:#f5f5f5; cursor:not-allowed;" />
+
+                @Html.HiddenFor(model => model.Quantity)
+                @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+
+                <small class="text-muted">
+                    <i class="fas fa-lock"></i>
+                    Số lượng được quản lý qua nhập / xuất kho.
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Discount, "Giảm giá (%)", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @max = "100" } })
+                @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- ✅ THÊM TRƯỜNG TRẠNG THÁI -->
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, "Trạng thái bán", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox" style="margin-top: 10px;">
+                    <label style="font-size: 16px;">
+                        @Html.CheckBoxFor(model => model.IsActive, new { @id = "IsActive" })
+                        <span id="statusLabel" style="margin-left: 5px; font-weight: bold;">
+                            @(Model.IsActive ? "Còn bán" : "Ngừng bán")
+                        </span>
+                    </label>
+                </div>
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i>
+                    Bỏ tích để ngừng bán sản phẩm này trên website.
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Photo, "Ảnh đại diện", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (!string.IsNullOrEmpty(Model.Photo))
+                {
+                    <div style="margin-bottom: 10px;">
+                        <strong>Ảnh hiện tại:</strong><br />
+                        <img src="@Url.Content("~/image/" + Model.Photo)" alt="Current Image" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; padding: 5px;" />
+                    </div>
+                }
+
+                <input type="file" id="UploadImage" name="UploadImage" class="form-control" accept="image/*" />
+                @Html.ValidationMessageFor(model => model.Photo, "", new { @class = "text-danger" })
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i>
+                    Kích thước tối đa: <strong>5MB</strong>. Để trống nếu không muốn thay đổi ảnh.
+                </small>
+                <div id="imagePreview" style="margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, "Mô tả sản phẩm", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "5" })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartDate, "Ngày bắt đầu khuyến mại", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
+                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EndDate, "Ngày kết thúc khuyến mại", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
+                @Html.ValidationMessage("ErrorDate", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <a href="@Url.Action("Show", "Product")" class="btn btn-default">
+                    <i class="fas fa-arrow-left"></i> Trở về danh sách
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Lưu thay đổi
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Preview ảnh mới khi chọn
+        document.getElementById('UploadImage').addEventListener('change', function (e) {
+            var previewDiv = document.getElementById('imagePreview');
+            previewDiv.innerHTML = '';
+
+            if (e.target.files.length > 0) {
+                var file = e.target.files[0];
+                var fileName = file.name;
+                var fileSize = (file.size / (1024 * 1024)).toFixed(2);
+
+                if (fileSize > 5) {
+                    previewDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Ảnh quá lớn: ' + fileSize + ' MB</div>';
+                    e.target.value = '';
+                    return;
+                }
+
+                var info = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Ảnh mới: <strong>' + fileName + '</strong> (' + fileSize + ' MB)</div>';
+
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    info += '<img src="' + event.target.result + '" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; padding: 5px;" />';
+                    previewDiv.innerHTML = info;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Validate dates
+        document.querySelector('form').addEventListener('submit', function (e) {
+            var startDate = document.querySelector('input[name="StartDate"]').value;
+            var endDate = document.querySelector('input[name="EndDate"]').value;
+
+            if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+                e.preventDefault();
+                alert('Ngày kết thúc phải muộn hơn ngày bắt đầu!');
+                return false;
+            }
+        });
+
+        // ✅ Cập nhật label khi thay đổi checkbox IsActive
+        document.getElementById('IsActive').addEventListener('change', function () {
+            var label = document.getElementById('statusLabel');
+            if (this.checked) {
+                label.textContent = 'Còn bán';
+                label.style.color = 'green';
+            } else {
+                label.textContent = 'Ngừng bán';
+                label.style.color = 'red';
+            }
+        });
+
+        // Set màu ban đầu cho label
+        window.addEventListener('DOMContentLoaded', function () {
+            var checkbox = document.getElementById('IsActive');
+            var label = document.getElementById('statusLabel');
+            if (checkbox.checked) {
+                label.style.color = 'green';
+            } else {
+                label.style.color = 'red';
+            }
+        });
+    </script>
+}

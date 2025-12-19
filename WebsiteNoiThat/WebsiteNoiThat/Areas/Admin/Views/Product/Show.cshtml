@@ -1,0 +1,155 @@
+﻿@model IEnumerable<WebsiteNoiThat.Models.ProductViewModel>
+
+@{
+    ViewBag.Title = "Danh sách sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Danh sách sản phẩm</h2>
+<hr />
+
+<!-- HIỂN THỊ THÔNG BÁO -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fas fa-check-circle"></i> @TempData["Success"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+    </div>
+}
+
+<p>
+    <a href="@Url.Action("Add", "Product")" class="btn btn-primary" style="margin-top:10px; margin-bottom:10px;">
+        <i class="fas fa-plus-circle"></i> Thêm sản phẩm
+    </a>
+</p>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="example" class="table table-striped table-bordered table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Mã SP</th>
+                        <th>Tên SP</th>
+                        <th>Hình ảnh</th>
+                        <th>Mô tả</th>
+                        <th>Danh mục SP</th>
+                        <th>Số lượng</th>
+                        <th>Khuyến mãi</th>
+                        <th>Giá</th>
+                        <th>Trạng thái</th> <!-- ✅ CỘT MỚI -->
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="Search @(!item.IsActive ? "table-secondary" : "")">
+                            <td style="text-align:center;">@item.ProductId</td>
+                            <td style="text-align:center;">@item.Name</td>
+                            <td style="text-align:center;">
+                                <img style="height:100px" src="@Url.Content("~/image/" + item.Photo)" alt="Ảnh sản phẩm" onerror="this.src='@Url.Content("~/Content/images/no-image.png")'">
+                            </td>
+                            <td style="text-align:center;">
+                                @if (!string.IsNullOrEmpty(item.Description) && item.Description.Length > 50)
+                                {
+                                    @item.Description.Substring(0, 50)<text>...</text>
+                                }
+                                else
+                                {
+                                    @item.Description
+                                }
+                            </td>
+                            <td style="text-align:center;">@item.CateName</td>
+                            <td style="text-align:center;">@item.Quantity</td>
+                            <td style="text-align:center;">@item.Discount%</td>
+                            <td style="text-align:center;">@item.Price.GetValueOrDefault(0).ToString("N0")₫</td>
+
+                            <!-- ✅ HIỂN THỊ TRẠNG THÁI -->
+                            <td style="text-align:center;">
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-check-circle"></i> Còn bán
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">
+                                        <i class="fas fa-ban"></i> Ngừng bán
+                                    </span>
+                                }
+                            </td>
+
+                            <!-- ✅ CẬP NHẬT HÀNH ĐỘNG -->
+                            <td style="text-align:center; min-width: 180px;">
+                                <a href="@Url.Action("Edit", "Product", new { ProductId = item.ProductId })"
+                                   class="btn btn-sm btn-primary"
+                                   title="Sửa">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+
+                                @if (item.IsActive)
+                                {
+                                    <!-- Nút Ngừng bán (thay vì Xóa) -->
+                                    <a href="@Url.Action("Delete", "Product", new { id = item.ProductId })"
+                                       class="btn btn-sm btn-warning"
+                                       onclick="return confirm('Bạn có chắc chắn muốn ngừng bán sản phẩm này?');"
+                                       title="Ngừng bán">
+                                        <i class="fa fa-ban"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <!-- Nút Khôi phục -->
+                                    <a href="@Url.Action("Restore", "Product", new { id = item.ProductId })"
+                                       class="btn btn-sm btn-success"
+                                       onclick="return confirm('Bạn có muốn khôi phục sản phẩm này?');"
+                                       title="Khôi phục">
+                                        <i class="fa fa-undo"></i>
+                                    </a>
+                                }
+
+                                <a href="@Url.Action("Index", "Variant", new { productId = item.ProductId })"
+                                   class="btn btn-sm btn-info"
+                                   title="Quản lý biến thể">
+                                    <i class="fa fa-cubes"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Content/DataTable/js/jquery.dataTables.min.js"></script>
+    <script src="~/Content/DataTable/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#example').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+                },
+                "order": [[0, "desc"]], // Sắp xếp theo Mã SP giảm dần
+                "pageLength": 25
+            });
+
+            // Tự động ẩn thông báo sau 5 giây
+            setTimeout(function () {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
+    </script>
+}

@@ -1,0 +1,107 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|c:\\users\\hp\\downloads\\website-ban-noi-that-main\\websitenoithat\\websitenoithat\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|solutionrelative:websitenoithat\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|c:\\users\\hp\\downloads\\website-ban-noi-that-main\\websitenoithat\\websitenoithat\\areas\\admin\\views\\stockout\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|solutionrelative:websitenoithat\\areas\\admin\\views\\stockout\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|c:\\users\\hp\\downloads\\website-ban-noi-that-main\\websitenoithat\\websitenoithat\\areas\\admin\\views\\stockin\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|solutionrelative:websitenoithat\\areas\\admin\\views\\stockin\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{dcc4ea97-1c0c-482b-b205-e541c0df9728}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockOut\\Create.cshtml",
+              "RelativeDocumentMoniker": "WebsiteNoiThat\\Areas\\Admin\\Views\\StockOut\\Create.cshtml",
+              "ToolTip": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockOut\\Create.cshtml",
+              "RelativeToolTip": "WebsiteNoiThat\\Areas\\Admin\\Views\\StockOut\\Create.cshtml",
+              "ViewState": "AgIAAFUAAAAAAAAAAAAewGkAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T01:09:33.645Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn\\Create.cshtml",
+              "RelativeDocumentMoniker": "WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn\\Create.cshtml",
+              "ToolTip": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn\\Create.cshtml",
+              "RelativeToolTip": "WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn\\Create.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T01:09:16.239Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAmwBYAAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-18T14:46:23.019Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 490,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1070,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{004be353-6879-467c-9d1e-9ac23cdf6d49}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

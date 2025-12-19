@@ -1,0 +1,565 @@
+﻿@using WebsiteNoiThat.Common
+@using WebsiteNoiThat.Models
+
+@{
+    ViewBag.Title = "Tổng quan Quản trị Cây cảnh";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    // Các biến thống kê (Giả định được truyền từ Controller)
+    var totalSales = ViewBag.TotalSales ?? 125000000M;
+    var totalOrders = ViewBag.TotalOrders ?? 450;
+    var lowStockCount = ViewBag.LowStockCount ?? 18;
+    var newCustomers = ViewBag.NewCustomers ?? 35;
+}
+
+<style>
+    /* ================================================
+       CSS TÙY CHỈNH CHO GIAO DIỆN CÂY CẢNH
+       ================================================ */
+
+    /* Màu nền xanh lá */
+    .bg-plant-primary {
+        background: linear-gradient(135deg, #38761d 0%, #4a9d2a 100%) !important;
+        color: white;
+    }
+
+    /* Border màu xanh lá */
+    .border-left-plant {
+        border-left: 0.35rem solid #6aa84f !important;
+        background: linear-gradient(135deg, #ffffff 0%, #f1f8e9 100%);
+    }
+
+    .border-left-primary {
+        border-left: 0.35rem solid #4e73df !important;
+        background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+    }
+
+    .border-left-danger {
+        border-left: 0.35rem solid #e74a3b !important;
+        background: linear-gradient(135deg, #ffffff 0%, #ffebee 100%);
+    }
+
+    .border-left-info {
+        border-left: 0.35rem solid #36b9cc !important;
+        background: linear-gradient(135deg, #ffffff 0%, #e1f5fe 100%);
+    }
+
+    /* Card hover effect */
+    .card-dashboard-action {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-dashboard-action::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        pointer-events: none;
+    }
+
+    .card-dashboard-action:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Icon styling */
+    .icon-plant-bg {
+        color: rgba(106, 168, 79, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .card-dashboard-action:hover .icon-plant-bg {
+        color: rgba(106, 168, 79, 0.5);
+        transform: scale(1.2) rotate(10deg);
+    }
+
+    /* Button styling */
+    .btn-plant {
+        background: linear-gradient(135deg, #6aa84f 0%, #38761d 100%);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(106, 168, 79, 0.3);
+    }
+
+    .btn-plant:hover {
+        background: linear-gradient(135deg, #38761d 0%, #2d5f18 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106, 168, 79, 0.4);
+    }
+
+    /* Chart containers */
+    .chart-bar {
+        position: relative;
+        height: 350px;
+        padding: 1rem;
+    }
+
+    .chart-pie {
+        position: relative;
+        height: 280px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* List group styling */
+    .list-group-item-action {
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+    }
+
+    .list-group-item-action:hover {
+        border-left-color: #6aa84f;
+        background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%);
+        transform: translateX(5px);
+    }
+
+    /* Badge styling */
+    .bg-plant-primary {
+        background: linear-gradient(135deg, #6aa84f 0%, #38761d 100%) !important;
+        color: white;
+        box-shadow: 0 2px 8px rgba(106, 168, 79, 0.3);
+    }
+
+    /* Animation */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card {
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: backwards;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tree text-success"></i> Tổng quan Quản trị
+        </h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-plant shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50"></i> Báo cáo Doanh thu
+        </a>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-plant shadow h-100 py-2 card-dashboard-action">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Doanh Thu (Tháng này)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @totalSales.ToString("N0") ₫
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-leaf fa-2x icon-plant-bg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 card-dashboard-action">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Đơn Hàng Mới (Chờ xử lý)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @totalOrders
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shopping-basket fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2 card-dashboard-action">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Cây Sắp Hết Hàng (Cần nhập)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @lowStockCount sản phẩm
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 card-dashboard-action">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Khách hàng Mới (Tháng)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @newCustomers
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-plant-primary">
+                    <h6 class="m-0 font-weight-bold text-white">
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        Hiệu suất Doanh số Quý 
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="salesBarChart"></canvas>
+                    </div>
+                    <hr>
+                    <p class="small text-muted">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        So sánh doanh số bán cây cảnh (Sản phẩm) với doanh số khác qua các quý.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-plant-primary">
+                    <h6 class="m-0 font-weight-bold text-white">
+                        <i class="fas fa-chart-pie mr-2"></i>
+                        Trạng thái Đơn hàng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="orderStatusPieChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-3">
+                            <i class="fas fa-circle text-warning"></i> Chờ Xử lý
+                        </span>
+                        <span class="mr-3">
+                            <i class="fas fa-circle text-success"></i> Hoàn thành
+                        </span>
+                        <span class="mr-3">
+                            <i class="fas fa-circle text-danger"></i> Hủy
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-plant-primary">
+                    <h6 class="m-0 font-weight-bold text-white">
+                        <i class="fas fa-bolt mr-2"></i>
+                        Chức năng Nhanh
+                    </h6>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="/Admin/Product/Show" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus-circle text-success mr-2"></i> Thêm Cây cảnh mới
+                    </a>
+                    <a href="/Admin/Warehouse/StockInIndex" class="list-group-item list-group-item-action">
+                        <i class="fas fa-box-open text-primary mr-2"></i> Tạo Phiếu Nhập Kho
+                    </a>
+                    <a href="/Admin/Order/Index?status=1" class="list-group-item list-group-item-action">
+                        <i class="fas fa-bell text-danger mr-2"></i> Xử lý Đơn hàng mới (@totalOrders)
+                    </a>
+                    <a href="/Admin/Warehouse/Inventory?warehouseId=1" class="list-group-item list-group-item-action">
+                        <i class="fas fa-exclamation-triangle text-warning mr-2"></i> Kiểm tra Tồn kho
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-shipping-fast mr-2"></i>
+                        Hoạt động Đơn hàng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="fas fa-shipping-fast fa-3x text-gray-300 my-4"></i>
+                    </div>
+                    <p class="small text-muted">
+                        Hiển thị 5 đơn hàng mới nhất cần được xử lý ngay lập tức.
+                    </p>
+                    <a target="_blank" rel="nofollow" href="/Admin/Order/Index">
+                        Xem tất cả đơn hàng &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-trophy mr-2"></i>
+                        Top Cây Bán Chạy
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush small">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-seedling text-success mr-2"></i>Cây Kim Tiền</span>
+                            <span class="badge bg-plant-primary badge-pill">120</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-seedling text-success mr-2"></i>Cây Lưỡi Hổ</span>
+                            <span class="badge bg-plant-primary badge-pill">95</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-seedling text-success mr-2"></i>Cây Sen Đá Mini</span>
+                            <span class="badge bg-plant-primary badge-pill">210</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-seedling text-success mr-2"></i>Cây Trầu Bà</span>
+                            <span class="badge bg-plant-primary badge-pill">88</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-seedling text-success mr-2"></i>Xương Rồng Bát Tiên</span>
+                            <span class="badge bg-plant-primary badge-pill">60</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // ================================================
+        // KHỞI TẠO BIỂU ĐỒ CỘT - DOANH SỐ QUÝ
+        // ================================================
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // 1. BIỂU ĐỒ CỘT (Bar Chart)
+            const barCtx = document.getElementById('salesBarChart');
+            if (barCtx) {
+                new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["Quý 1", "Quý 2", "Quý 3", "Quý 4"],
+                        datasets: [
+                            {
+                                label: "Sản phẩm (Cây & Chậu)",
+                                backgroundColor: 'rgba(106, 168, 79, 0.85)',
+                                borderColor: '#6aa84f',
+                                borderWidth: 2,
+                                hoverBackgroundColor: '#38761d',
+                                hoverBorderColor: '#2d5f18',
+                                borderRadius: 8,
+                                borderSkipped: false,
+                                data: [40000000, 65000000, 70000000, 85000000]
+                            },
+                            {
+                                label: "Doanh thu khác",
+                                backgroundColor: 'rgba(246, 194, 62, 0.85)',
+                                borderColor: '#f6c23e',
+                                borderWidth: 2,
+                                hoverBackgroundColor: '#e0ac0e',
+                                hoverBorderColor: '#c89a0a',
+                                borderRadius: 8,
+                                borderSkipped: false,
+                                data: [15000000, 20000000, 25000000, 30000000]
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    font: { size: 13, weight: 'bold' },
+                                    color: '#1b5e20',
+                                    padding: 20,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(27, 94, 32, 0.95)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#6aa84f',
+                                borderWidth: 2,
+                                padding: 15,
+                                cornerRadius: 10,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' +
+                                               new Intl.NumberFormat('vi-VN', {
+                                                   style: 'currency',
+                                                   currency: 'VND',
+                                                   minimumFractionDigits: 0
+                                               }).format(context.parsed.y);
+                                    },
+                                    footer: function(items) {
+                                        let sum = items.reduce((a, b) => a + b.parsed.y, 0);
+                                        return 'Tổng: ' + new Intl.NumberFormat('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
+                                            minimumFractionDigits: 0
+                                        }).format(sum);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return new Intl.NumberFormat('vi-VN', {
+                                            notation: 'compact',
+                                            compactDisplay: 'short'
+                                        }).format(value) + ' ₫';
+                                    },
+                                    color: '#2e7d32',
+                                    font: { size: 11, weight: '600' }
+                                },
+                                grid: {
+                                    color: 'rgba(106, 168, 79, 0.1)',
+                                    drawBorder: false
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#2e7d32',
+                                    font: { size: 12, weight: 'bold' }
+                                },
+                                grid: { display: false }
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        }
+                    }
+                });
+            }
+
+            // 2. BIỂU ĐỒ TRÒN (Doughnut Chart)
+            const pieCtx = document.getElementById('orderStatusPieChart');
+            if (pieCtx) {
+                new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ["Chờ Xử lý", "Hoàn thành", "Đã Hủy"],
+                        datasets: [{
+                            data: [@totalOrders, 800, 50],
+                            backgroundColor: [
+                                'rgba(246, 194, 62, 0.9)',   // Vàng
+                                'rgba(106, 168, 79, 0.9)',   // Xanh lá
+                                'rgba(231, 74, 59, 0.9)'     // Đỏ
+                            ],
+                            borderColor: ['#f6c23e', '#6aa84f', '#e74a3b'],
+                            borderWidth: 3,
+                            hoverOffset: 20,
+                            hoverBorderWidth: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(27, 94, 32, 0.95)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#6aa84f',
+                                borderWidth: 2,
+                                padding: 15,
+                                cornerRadius: 10,
+                                callbacks: {
+                                    label: function(context) {
+                                        let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        let percentage = ((context.parsed / total) * 100).toFixed(1);
+                                        return context.label + ': ' + context.parsed + ' đơn (' + percentage + '%)';
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true,
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

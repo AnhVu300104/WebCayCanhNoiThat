@@ -1,0 +1,166 @@
+﻿@model Models.EF.ProductVariant
+
+@{
+    ViewBag.Title = "Thêm biến thể mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var product = ViewBag.Product as Models.EF.Product;
+    var attributes = ViewBag.Attributes as List<Models.EF.Attribute>;
+    var warehouses = ViewBag.Warehouses as List<Models.EF.Warehouse>;
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Thêm biến thể cho: <span class="text-primary">@product.Name</span>
+        </h1>
+        <a href="@Url.Action("Index", "Variant", new { productId = product.ProductId })" class="btn btn-sm btn-secondary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationSummary(false, "Vui lòng kiểm tra lại thông tin:", new { @class = "mb-0" })
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Thông tin biến thể mới</h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Create", "Variant", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ProductId)
+
+                <div class="row">
+                    <div class="col-md-6 border-right">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Mã SKU <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.SKU, new { @class = "form-control", @placeholder = "Để trống để tự sinh mã..." })
+                            <small class="form-text text-muted">Mã định danh duy nhất (VD: SP001-RED-L).</small>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label class="font-weight-bold">Giá bán</label>
+                                @Html.TextBoxFor(m => m.Price, new { @class = "form-control", @type = "number", @min = "0", @Value = product.Price })
+                            </div>
+                            <div class="col-md-6">
+                                <label class="font-weight-bold">Giá khuyến mãi</label>
+                                @Html.TextBoxFor(m => m.SalePrice, new { @class = "form-control", @type = "number", @min = "0" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Số lượng tồn kho</label>
+                            <input type="number" class="form-control" value="0" readonly />
+                            @Html.HiddenFor(m => m.StockQuantity, new { Value = 0 })
+                            <small class="text-muted">
+                                <i class="fas fa-lock"></i>
+                                Mặc định = 0. Số lượng chỉ thay đổi qua nhập kho.
+                            </small>
+                        </div>
+
+                        <!-- ===== THÊM MỚI: Chọn kho ===== -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">
+                                <i class="fas fa-warehouse text-info"></i> Kho hàng
+                            </label>
+                            <select name="WarehouseId" class="form-control">
+                                <option value="">-- Chọn kho (Tùy chọn) --</option>
+                                @if (warehouses != null)
+                                {
+                                    foreach (var wh in warehouses)
+                                    {
+                                        <option value="@wh.WarehouseId">
+                                            @wh.Code - @wh.Name
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <small class="text-muted">
+                                Chọn kho lưu trữ biến thể này. Có thể để trống.
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Ảnh đại diện</label>
+                            <div class="d-flex align-items-center mt-2">
+                                <img src="~/Content/images/no-image.png" id="previewImg" class="mr-3" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;" />
+                                <div class="custom-file">
+                                    <input type="file" name="ImageFile" id="ImageFile" class="custom-file-input" onchange="previewFile(this);">
+                                    <label class="custom-file-label" for="ImageFile">Chọn ảnh...</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="font-weight-bold text-secondary mb-3">Chọn phân loại hàng</h6>
+
+                        @if (attributes != null && attributes.Any())
+                        {
+                            foreach (var attr in attributes)
+                            {
+                                <div class="form-group">
+                                    <label class="font-weight-bold">@attr.Name</label>
+                                    <input type="hidden" name="AttributeIds" value="@attr.AttributeId" />
+                                    <select name="ValueIds" class="form-control">
+                                        <option value="0">-- Chọn @attr.Name --</option>
+                                        @if (attr.AttributeValues != null)
+                                        {
+                                            foreach (var val in attr.AttributeValues)
+                                            {
+                                                <option value="@val.ValueId">@val.Value</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            }
+                            <hr />
+                            <div class="alert alert-info small">
+                                <i class="fas fa-info-circle"></i> Vui lòng chọn các thuộc tính tương ứng cho biến thể này (Ví dụ: Màu Đỏ, Size L).
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning text-center">
+                                <i class="fas fa-exclamation-triangle mb-2" style="font-size: 20px;"></i><br />
+                                Chưa có thuộc tính nào được cấu hình.<br />
+                                Vui lòng vào <b>Quản lý thuộc tính</b> để thêm Màu sắc, Kích thước...
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group text-center mt-4">
+                    <button type="submit" class="btn btn-success btn-lg px-5">
+                        <i class="fas fa-save"></i> Lưu Biến Thể
+                    </button>
+                    <a href="@Url.Action("Index", "Variant", new { productId = product.ProductId })" class="btn btn-secondary btn-lg ml-2">
+                        Hủy bỏ
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewFile(input) {
+            var file = input.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    $("#previewImg").attr("src", reader.result);
+                }
+                reader.readAsDataURL(file);
+                $(input).next('.custom-file-label').html(file.name);
+            }
+        }
+    </script>
+}

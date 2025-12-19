@@ -1,0 +1,578 @@
+﻿@model WebsiteNoiThat.Models.ProductDetailViewModel
+
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .zoom {
+        transition: transform .2s;
+    }
+
+        .zoom:hover {
+            transform: scale(1.1);
+        }
+
+    .chitietsp {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+        .chitietsp td {
+            padding: 10px;
+            vertical-align: top;
+        }
+
+    .status {
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    .pink {
+        color: #e91e63;
+        font-weight: bold;
+    }
+
+    /* Variant Selection Styles */
+    .variant-section {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .variant-label {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .variant-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .variant-option {
+        position: relative;
+        border: 2px solid #ddd;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        background: white;
+        transition: all 0.3s;
+        min-width: 100px;
+        text-align: center;
+    }
+
+        .variant-option:hover {
+            border-color: #007bff;
+            background: #f0f8ff;
+        }
+
+        .variant-option.selected {
+            border-color: #007bff;
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .variant-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+
+    .variant-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        margin-bottom: 5px;
+    }
+
+    .variant-option.selected .variant-image {
+        border-color: #007bff;
+    }
+
+    .price-highlight {
+        font-size: 24px;
+        color: #e91e63;
+        font-weight: bold;
+    }
+
+    .price-old {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 18px;
+        margin-left: 10px;
+    }
+
+    .discount-badge {
+        display: inline-block;
+        background: #e74c3c;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 8px;
+    }
+
+    /* Quantity Controls */
+    .quantity-section {
+        margin: 20px 0;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quantity-box {
+        display: flex;
+        align-items: center;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .quantity-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: #f8f9fa;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .quantity-btn:hover:not(:disabled) {
+            background: #007bff;
+            color: white;
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+    .quantity-input {
+        width: 60px;
+        height: 40px;
+        border: none;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+    }
+
+        .quantity-input:focus {
+            outline: none;
+        }
+
+    .total-price-section {
+        margin-top: 15px;
+        padding: 15px;
+        background: #fff3cd;
+        border-radius: 6px;
+        border: 2px solid #ffc107;
+    }
+
+    .total-label {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-right: 10px;
+    }
+
+    .total-price {
+        font-size: 28px;
+        color: #e91e63;
+        font-weight: bold;
+    }
+</style>
+
+@section Noidungbenphai {
+    <table class="chitietsp">
+        <h3 id="title_spmoi" style="text-align:center">@Model.Name.ToUpper()</h3>
+        <br />
+        <tr>
+            <td rowspan="8">
+                <img style="width:300px" id="zoom_04" class="zoom" src="@Url.Content("~/image/" + Model.Photo)" alt="@Model.Name" />
+            </td>
+            <td>
+                <h3>Mã sản phẩm: @Model.ProductId</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p class="status">Tên sản phẩm: <span class="pink">@Model.Name</span></p>
+            </td>
+        </tr>
+
+        @* PHẦN CHỌN PHÂN LOẠI / BIẾN THỂ *@
+        @if (Model.Variants != null && Model.Variants.Any())
+        {
+            <tr>
+                <td>
+                    <div class="variant-section">
+                        <div class="variant-label">
+                            <i class="fa fa-tags"></i> Phân loại:
+                        </div>
+                        <div class="variant-options" id="variantOptions">
+                            @foreach (var variant in Model.Variants)
+                            {
+                                <div class="variant-option @(variant == Model.Variants.First() ? "selected" : "")"
+                                     data-variant-id="@variant.VariantId"
+                                     data-price="@variant.Price"
+                                     data-saleprice="@variant.SalePrice"
+                                     data-stock="@variant.StockQuantity"
+                                     data-image="@variant.Image"
+                                     data-sku="@variant.SKU">
+
+                                    @if (!string.IsNullOrEmpty(variant.Image))
+                                    {
+                                        <img src="@Url.Content("~/image/" + variant.Image)" class="variant-image" alt="@variant.VariantName" /><br />
+                                    }
+
+                                    <strong style="font-size:px;">@variant.VariantName</strong><br />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+
+        @* TÌNH TRẠNG KHO *@
+        <tr>
+            <td>
+                <p class="status">
+                    Tình trạng:
+                    <span class="pink" id="stockStatus">
+                        @if (Model.Variants.First().StockQuantity > 0)
+                        {
+                            @:còn <span id="stockQuantity">@Model.Variants.First().StockQuantity</span> sản phẩm
+                        }
+                        else
+                        {
+                            @:Hết hàng
+                        }
+                    </span>
+                </p>
+            </td>
+        </tr>
+
+        @* GIÁ ĐƠN VỊ *@
+        <tr>
+            <td>
+                <p class="status">
+                    Giá đơn vị:
+                    <span class="price-highlight" id="displayPrice">
+                        @{
+                            var firstVariant = Model.Variants.First();
+                            var displayPrice = firstVariant.SalePrice.HasValue && firstVariant.SalePrice > 0 && firstVariant.SalePrice < firstVariant.Price
+                                ? firstVariant.SalePrice.Value
+                                : firstVariant.Price;
+                        }
+                        @string.Format("{0:#,###}₫", displayPrice)
+                    </span>
+
+                    @if (firstVariant.SalePrice.HasValue && firstVariant.SalePrice > 0 && firstVariant.SalePrice < firstVariant.Price)
+                    {
+                        <span class="price-old" id="displayOldPrice">
+                            @string.Format("{0:#,###}₫", firstVariant.Price)
+                        </span>
+
+                        var discountPercent = (int)Math.Round(
+                (1 - ((double)firstVariant.SalePrice / (double)firstVariant.Price)) * 100
+                );
+
+                <span class="discount-badge">-@discountPercent%</span>
+            }
+                </p>
+            </td>
+        </tr>
+
+        @* THÔNG TIN SKU *@
+        <tr>
+            <td>
+                <p class="status">SKU: <span class="pink" id="displaySKU">@Model.Variants.First().SKU</span></p>
+            </td>
+        </tr>
+
+        @* CHỌN SỐ LƯỢNG *@
+        <tr>
+            <td>
+                <div class="quantity-section">
+                    <p class="status">Số lượng:</p>
+                    <div class="quantity-controls">
+                        <div class="quantity-box">
+                            <button type="button" class="quantity-btn" id="btnDecrease">−</button>
+                            <input type="number" class="quantity-input" id="quantityInput" value="1" min="1" max="@Model.Variants.First().StockQuantity" readonly />
+                            <button type="button" class="quantity-btn" id="btnIncrease">+</button>
+                        </div>
+                    </div>
+
+                    <div class="total-price-section">
+                        <span class="total-label">Tổng tiền:</span>
+                        <span class="total-price" id="totalPrice">@string.Format("{0:#,###}₫", displayPrice)</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        @* NÚT ĐẶT MUA *@
+        <tr>
+            <td>
+                <div class="form-group">
+                    <input type="hidden" id="selectedVariantId" value="@Model.Variants.First().VariantId" />
+                    <input type="hidden" id="unitPrice" value="@displayPrice" />
+                    <input type="hidden" id="maxStock" value="@Model.Variants.First().StockQuantity" />
+                    <a style="font-family:unset;"
+                       href="javascript:void(0);"
+                       id="btnAddToCart"
+                       class="btn btn-primary fa fa-cart-plus">
+                        Đặt mua hàng
+                    </a>
+                </div>
+            </td>
+        </tr>
+    </table>
+}
+
+<hr>
+<div class="row">
+    <div class="short-des col-sm-12 col-xs-12">
+        <ul class="nav nav-tabs" style="font-size:17px">
+            <li class="active"><a href="#produc-des" data-toggle="tab">Mô tả sản phẩm</a></li>
+            <li><a href="#tab-gh" data-toggle="tab">Giao hàng</a></li>
+            <li><a href="#tab-th" data-toggle="tab">Trả hàng</a></li>
+            <li><a href="#tab-bh" data-toggle="tab">Bảo hành</a></li>
+        </ul>
+
+        <div class="tab-content" style="margin-top:15px; margin-bottom:10px">
+            <div class="tab-pane fade in active" id="produc-des">
+                <h2>@Model.Description</h2>
+            </div>
+            <div class="tab-pane fade" id="tab-gh">
+                <div align="justify">
+                    <p><strong>I. Vận chuyển / Shipping</strong></p>
+                    <p>
+                        <strong>A. Gói tiết kiệm:</strong><br>
+                        - Địa điểm giao: nơi xe có thể vào (hẻm > 3m).<br>
+                        - Thời gian giao hàng: 1-3 ngày nội thành, 5-7 ngày ngoại tỉnh.<br>
+                        - Sản phẩm được đóng gói chắc chắn, chống va đập.
+                    </p>
+                    <p>
+                        <strong>B. Gói dịch vụ:</strong><br>
+                        - Dịch vụ giao tận nơi, vào hẻm nhỏ, hoặc lên lầu cần ít nhất 1-2 người hỗ trợ.<br>
+                        - Thời gian giao hàng theo giờ yêu cầu nếu có hàng sẵn.
+                    </p>
+                    <p>
+                        <strong>II. Lắp đặt / Setup</strong><br>
+                        - Sản phẩm nhỏ: khách hàng có thể tự lắp đặt.<br>
+                        - Sản phẩm lớn: có thể yêu cầu nhân viên hỗ trợ lắp đặt đúng vị trí.
+                    </p>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-th">
+                <p align="justify"><strong>Chính sách đổi trả:</strong></p>
+                <p align="justify">
+                    - Đổi trả khi sản phẩm bị hư hỏng trong quá trình vận chuyển.<br>
+                    - Khách hàng cần kiểm tra sản phẩm khi nhận hàng. Nếu sản phẩm bị lỗi, không đúng mẫu mã, có thể yêu cầu đổi mới.<br>
+                    - Thời gian đổi trả: trong vòng 7 ngày kể từ ngày nhận hàng.
+                </p>
+            </div>
+
+            <div class="tab-pane fade" id="tab-bh">
+                <p><strong>Chính sách bảo hành:</strong></p>
+                <p>
+                    - Sản phẩm được bảo hành 12 tháng kể từ ngày mua.<br>
+                    - Bảo hành các lỗi từ nhà sản xuất.<br>
+                    - Không bảo hành các trường hợp hư hỏng do sử dụng không đúng cách.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+<div class="boxmain">
+    @Html.Action("NewProduct", "Product")
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Hàm cập nhật tổng giá
+            function updateTotalPrice() {
+                var quantity = parseInt($('#quantityInput').val()) || 1;
+                var unitPrice = parseFloat($('#unitPrice').val()) || 0;
+                var totalPrice = quantity * unitPrice;
+
+                $('#totalPrice').text(formatCurrency(totalPrice) + '₫');
+            }
+
+            // Nút giảm số lượng
+            $('#btnDecrease').click(function () {
+                var input = $('#quantityInput');
+                var currentVal = parseInt(input.val()) || 1;
+                var minVal = parseInt(input.attr('min')) || 1;
+
+                if (currentVal > minVal) {
+                    input.val(currentVal - 1);
+                    updateTotalPrice();
+                }
+            });
+
+            // Nút tăng số lượng
+            $('#btnIncrease').click(function () {
+                var input = $('#quantityInput');
+                var currentVal = parseInt(input.val()) || 1;
+                var maxVal = parseInt(input.attr('max')) || 999;
+
+                if (currentVal < maxVal) {
+                    input.val(currentVal + 1);
+                    updateTotalPrice();
+                } else {
+                    alert('Số lượng tối đa là ' + maxVal + ' sản phẩm!');
+                }
+            });
+
+            // Xử lý khi nhập trực tiếp vào ô input
+            $('#quantityInput').on('change', function () {
+                var val = parseInt($(this).val()) || 1;
+                var minVal = parseInt($(this).attr('min')) || 1;
+                var maxVal = parseInt($(this).attr('max')) || 999;
+
+                if (val < minVal) {
+                    $(this).val(minVal);
+                } else if (val > maxVal) {
+                    $(this).val(maxVal);
+                    alert('Số lượng tối đa là ' + maxVal + ' sản phẩm!');
+                }
+
+                updateTotalPrice();
+            });
+
+            // Xử lý khi click chọn phân loại
+            $('.variant-option').click(function () {
+                if ($(this).hasClass('disabled')) {
+                    return;
+                }
+
+                // Bỏ chọn tất cả
+                $('.variant-option').removeClass('selected');
+
+                // Chọn cái hiện tại
+                $(this).addClass('selected');
+
+                // Lấy thông tin biến thể
+                var variantId = $(this).data('variant-id');
+                var price = $(this).data('price');
+                var salePrice = $(this).data('saleprice');
+                var stock = $(this).data('stock');
+                var image = $(this).data('image');
+                var sku = $(this).data('sku');
+
+                // Cập nhật hidden input
+                $('#selectedVariantId').val(variantId);
+
+                // Cập nhật ảnh
+                if (image) {
+                    $('#zoom_04').attr('src', '@Url.Content("~/image/")' + image);
+                }
+
+                // Cập nhật SKU
+                $('#displaySKU').text(sku);
+
+                // Cập nhật giá
+                var displayPrice = (salePrice > 0 && salePrice < price) ? salePrice : price;
+                $('#displayPrice').text(formatCurrency(displayPrice) + '₫');
+                $('#unitPrice').val(displayPrice);
+
+                // Cập nhật giá cũ và badge giảm giá
+                if (salePrice > 0 && salePrice < price) {
+                    var discountPercent = Math.round((1 - (salePrice / price)) * 100);
+
+                    if ($('#displayOldPrice').length === 0) {
+                        $('#displayPrice').after('<span class="price-old" id="displayOldPrice"></span>');
+                    }
+                    $('#displayOldPrice').text(formatCurrency(price) + '₫').show();
+
+                    if ($('.discount-badge').length === 0) {
+                        $('#displayOldPrice').after('<span class="discount-badge"></span>');
+                    }
+                    $('.discount-badge').text('-' + discountPercent + '%').show();
+                } else {
+                    $('#displayOldPrice').hide();
+                    $('.discount-badge').hide();
+                }
+
+                // Cập nhật tồn kho
+                if (stock > 0) {
+                    $('#stockStatus').html('còn <span id="stockQuantity">' + stock + '</span> sản phẩm');
+                } else {
+                    $('#stockStatus').html('Hết hàng');
+                }
+
+                // Cập nhật max cho quantity input và reset về 1
+                $('#quantityInput').attr('max', stock).val(1);
+                $('#maxStock').val(stock);
+
+                // Cập nhật tổng giá
+                updateTotalPrice();
+
+                // Disable/Enable nút mua hàng
+                if (stock > 0) {
+                    $('#btnAddToCart').removeClass('disabled').css('opacity', '1');
+                    $('#btnIncrease').prop('disabled', false);
+                } else {
+                    $('#btnAddToCart').addClass('disabled').css('opacity', '0.5');
+                    $('#btnIncrease').prop('disabled', true);
+                }
+            });
+
+            // Xử lý nút thêm vào giỏ hàng
+            $('#btnAddToCart').click(function (e) {
+                e.preventDefault();
+
+                var variantId = $('#selectedVariantId').val();
+                var quantity = parseInt($('#quantityInput').val()) || 1;
+                var stock = parseInt($('#maxStock').val()) || 0;
+
+                if (stock <= 0) {
+                    alert('Sản phẩm hiện đã hết hàng!');
+                    return;
+                }
+
+                if (quantity > stock) {
+                    alert('Số lượng vượt quá tồn kho!');
+                    return;
+                }
+
+                // Chuyển đến trang giỏ hàng với variantId và quantity
+                window.location.href = '/them-gio-hang?productid=@Model.ProductId&variantid=' + variantId + '&quantity=' + quantity;
+            });
+
+            // Hàm format tiền tệ
+            function formatCurrency(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+        });
+    </script>
+}

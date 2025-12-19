@@ -1,0 +1,132 @@
+﻿@model Models.EF.Order
+
+@{
+    ViewBag.Title = "Cập nhật đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    // true nếu đơn đã huỷ
+    bool isCanceled = ViewBag.IsCanceled != null && (bool)ViewBag.IsCanceled;
+}
+
+<style>
+    h2 {
+        text-align: center;
+        font-weight: 700;
+        color: #0d6efd;
+        margin-bottom: 30px;
+    }
+
+    .order-form {
+        max-width: 900px;
+        margin: auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.1);
+    }
+
+    .form-group label {
+        font-weight: 600;
+    }
+
+    .btn-action {
+        min-width: 130px;
+    }
+</style>
+
+<h2>Cập nhật đơn hàng</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="order-form">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+        @Html.HiddenFor(model => model.OrderId)
+
+        <!-- Tên người nhận -->
+        <div class="form-group row mb-3">
+            @Html.LabelFor(m => m.ShipName, "Tên người nhận", new { @class = "col-md-3 col-form-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.ShipName, new { @class = "form-control", required = "required" })
+            </div>
+        </div>
+
+        <!-- UserId -->
+        <div class="form-group row mb-3">
+            @Html.LabelFor(m => m.UserId, "Mã người dùng", new { @class = "col-md-3 col-form-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.UserId, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+
+        <!-- SĐT -->
+        <div class="form-group row mb-3">
+            @Html.LabelFor(m => m.ShipPhone, "Số điện thoại", new { @class = "col-md-3 col-form-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.ShipPhone, new { @class = "form-control", required = "required" })
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group row mb-3">
+            @Html.LabelFor(m => m.ShipEmail, "Email", new { @class = "col-md-3 col-form-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.ShipEmail, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <!-- Ngày cập nhật -->
+        <div class="form-group row mb-3">
+            @Html.LabelFor(m => m.UpdateDate, "Ngày cập nhật", new { @class = "col-md-3 col-form-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.UpdateDate, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+
+        <!-- Địa chỉ -->
+        <div class="form-group row mb-3">
+            @Html.LabelFor(m => m.ShipAddress, "Địa chỉ giao hàng", new { @class = "col-md-3 col-form-label" })
+            <div class="col-md-9">
+                @Html.TextAreaFor(m => m.ShipAddress, new { @class = "form-control", rows = 3, required = "required" })
+            </div>
+        </div>
+
+        <!-- Trạng thái đơn hàng -->
+        <div class="form-group row mb-4">
+            <label class="col-md-3 col-form-label">Trạng thái đơn hàng</label>
+            <div class="col-md-9">
+                @if (!isCanceled)
+                {
+                    @Html.DropDownListFor(
+                        m => m.StatusId,
+                        ViewBag.ListStatus as SelectList,
+                        "-- Chọn trạng thái --",
+                        new { @class = "form-control", required = "required" }
+                    )
+                }
+                else
+                {
+                    <span class="badge bg-danger p-2 fs-6">
+                        Đã huỷ
+                    </span>
+                    <div class="text-danger mt-2">
+                        Đơn hàng đã huỷ — không thể thay đổi trạng thái
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Button -->
+        <div class="text-center">
+            <input type="submit" value="Lưu thay đổi" class="btn btn-success btn-action me-2" />
+            @Html.ActionLink(
+                "Quay lại danh sách",
+                "Show",
+                "Orders",
+                new { area = "Admin" },
+                new { @class = "btn btn-secondary btn-action" }
+            )
+        </div>
+    </div>
+}

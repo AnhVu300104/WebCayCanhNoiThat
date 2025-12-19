@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace WebsiteNoiThat.Areas.Admin.Models
+{
+    public class OrderProduct
+    {
+        [DisplayName("Mã hoá đơn")]
+        public int? OrderId { get; set; }
+
+        [DisplayName("Mã sản phẩm")]
+        public int ProductId { get; set; }
+
+        [DisplayName("Tên sản phẩm")]
+        public string ProductName { get; set; }
+
+        [DisplayName("Đơn giá")]
+        // Sử dụng decimal? hoặc double? cho tiền tệ là tốt nhất để tránh lỗi làm tròn
+        public decimal? Price { get; set; }
+
+        [DisplayName("Số lượng")]
+        public int? Quantity { get; set; }
+
+        // ============================================
+        // *** ĐÃ THÊM DÒNG NÀY ĐỂ SỬA LỖI TRƯỚC ĐÓ ***
+        // ============================================
+        [DisplayName("Biến thể")]
+        public string VariantInfo { get; set; }
+    }
+}

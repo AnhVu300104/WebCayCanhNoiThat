@@ -1,0 +1,194 @@
+﻿@model Models.EF.Attribute
+
+@{
+    ViewBag.Title = "Quản lý giá trị thuộc tính";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    // Lấy danh sách giá trị từ ViewBag (được truyền từ Controller)
+    var values = ViewBag.Values as List<Models.EF.AttributeValue>;
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Giá trị thuộc tính: <span class="text-primary">@Model.Name</span>
+        </h1>
+        <a href="@Url.Action("Index", "Attribute")" class="btn btn-sm btn-secondary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle mr-2"></i> @TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle mr-2"></i> @TempData["Error"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Thêm giá trị mới</h6>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-3">
+                        Thêm các tùy chọn cho thuộc tính này. Ví dụ: Nếu thuộc tính là <b>Màu sắc</b>, hãy thêm <i>Đỏ, Xanh, Vàng</i>.
+                    </p>
+
+                    @using (Html.BeginForm("AddValue", "Attribute", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="AttributeId" value="@Model.AttributeId" />
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Giá trị (Value) <span class="text-danger">*</span></label>
+                            <input type="text" name="Value" class="form-control" placeholder="VD: Đỏ, Size L, Cotton..." required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Thứ tự hiển thị</label>
+                            <input type="number" name="DisplayOrder" class="form-control" value="0" />
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-plus-circle"></i> Thêm ngay
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-light">
+                    <h6 class="m-0 font-weight-bold text-secondary">Thông tin thuộc tính</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Tên:</strong> @Model.Name</p>
+                    <p><strong>Mã Code:</strong> <code>@Model.Code</code></p>
+                    <p><strong>Kiểu hiển thị:</strong> @Model.DisplayType</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách giá trị hiện có</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th width="10%">ID</th>
+                                    <th>Giá trị</th>
+                                    <th width="15%" class="text-center">Thứ tự</th>
+                                    <th width="20%" class="text-center">Trạng thái</th>
+                                    <th width="15%" class="text-center">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (values != null && values.Any())
+                                {
+                                    foreach (var item in values)
+                                    {
+                                        <tr class="@(item.IsActive == false ? "table-secondary" : "")">
+                                            <td class="text-center">@item.ValueId</td>
+                                            <td class="@(item.IsActive == true ? "font-weight-bold" : "text-muted")">
+                                                @item.Value
+                                                @if (item.IsActive == false)
+                                                {
+                                                    <span class="text-muted small">(Đã tắt)</span>
+                                                }
+                                            </td>
+                                            <td class="text-center">@item.DisplayOrder</td>
+                                            <td class="text-center">
+                                                @if (item.IsActive == true)
+                                                {
+                                                    <span class="badge badge-success">
+                                                        <i class="fas fa-check-circle"></i> Hoạt động
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary">
+                                                        <i class="fas fa-ban"></i> Không hoạt động
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @* ✅ NÚT CHUYỂN ĐỔI TRẠNG THÁI *@
+                                                @if (item.IsActive == true)
+                                                {
+                                                    <a href="@Url.Action("ToggleValueStatus", "Attribute", new { valueId = item.ValueId, parentId = Model.AttributeId })"
+                                                       class="btn btn-warning btn-sm btn-circle"
+                                                       onclick="return confirm('Bạn có muốn vô hiệu hóa giá trị này?');"
+                                                       title="Vô hiệu hóa">
+                                                        <i class="fas fa-ban"></i>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("ToggleValueStatus", "Attribute", new { valueId = item.ValueId, parentId = Model.AttributeId })"
+                                                       class="btn btn-success btn-sm btn-circle"
+                                                       onclick="return confirm('Bạn có muốn kích hoạt lại giá trị này?');"
+                                                       title="Kích hoạt">
+                                                        <i class="fas fa-check"></i>
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-muted">
+                                            <i class="fas fa-inbox fa-2x mb-2"></i><br />
+                                            Chưa có giá trị nào. Hãy thêm ở khung bên trái.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Areas/Admin/Content/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Areas/Admin/Content/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#dataTable').DataTable({
+            "language": {
+                "search": "Tìm kiếm:",
+                "lengthMenu": "Hiện _MENU_ dòng",
+                "info": "Trang _PAGE_ / _PAGES_",
+                "zeroRecords": "Không có dữ liệu",
+                "paginate": { "next": "Sau", "previous": "Trước" }
+            },
+            "order": [[2, "asc"]] // Sắp xếp theo thứ tự hiển thị
+        });
+
+        // Tự động ẩn thông báo sau 5 giây
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+    });
+</script>

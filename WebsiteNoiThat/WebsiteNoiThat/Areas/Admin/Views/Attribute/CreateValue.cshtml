@@ -1,0 +1,66 @@
+﻿@model Models.EF.AttributeValue
+
+@{
+    ViewBag.Title = "Thêm giá trị thuộc tính";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    string displayType = ViewBag.DisplayType; // 'color' hoặc 'button'
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Thêm giá trị cho: <span class="text-primary">@ViewBag.AttributeName</span>
+        </h1>
+    </div>
+
+    <div class="card shadow mb-4" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Nhập thông tin giá trị</h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("CreateValue", "Attribute", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.AttributeId)
+
+                <div class="form-group">
+                    <label class="font-weight-bold">Giá trị (Value) <span class="text-danger">*</span></label>
+
+                    @if (displayType == "color")
+                    {
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Value, new { @type = "color", @class = "form-control", @style = "height: 45px; max-width: 100px;" })
+                            <input type="text" class="form-control ml-2" id="hexCode" placeholder="#FFFFFF" readonly>
+                        </div>
+                        <small>Chọn màu trên bảng màu.</small>
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Value, new { @class = "form-control", @placeholder = "VD: XL, Cotton, 29...", @required = "required" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Value, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label class="font-weight-bold">Tên hiển thị (Display Name)</label>
+                    @Html.TextBoxFor(m => m.DisplayValue, new { @class = "form-control", @placeholder = "VD: Màu Đỏ, Size Lớn..." })
+                    <small class="text-muted">Để trống nếu giống giá trị ở trên.</small>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="fas fa-plus-circle"></i> Thêm mới
+                    </button>
+                    <a href="@Url.Action("Edit", "Attribute", new { id = Model.AttributeId })" class="btn btn-secondary ml-2">Hủy bỏ</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tự động điền mã màu hex ra ô bên cạnh
+    document.querySelector('input[type="color"]')?.addEventListener('input', function() {
+        document.getElementById('hexCode').value = this.value;
+    });
+</script>

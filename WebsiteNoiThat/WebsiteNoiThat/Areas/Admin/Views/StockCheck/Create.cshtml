@@ -1,0 +1,347 @@
+﻿@model Models.EF.StockCheck
+@{
+    ViewBag.Title = "Tạo Phiếu Kiểm Kê";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-clipboard-check"></i> Tạo Phiếu Kiểm Kê Kho
+        </h1>
+        <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-secondary shadow-sm">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Lỗi!</strong> @TempData["Error"]
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    }
+
+    @using (Html.BeginForm("Create", "StockCheck", FormMethod.Post, new { @class = "needs-validation", id = "stockCheckForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <!-- Thông tin chung -->
+            <div class="col-lg-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-primary">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-info-circle"></i> Thông tin phiếu kiểm kê
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Code">Mã phiếu <span class="text-danger">*</span></label>
+                                    @Html.TextBoxFor(m => m.Code, new { @class = "form-control", placeholder = "Ví dụ: KC20251216001", required = "required", @readonly = "readonly" })
+                                    @Html.ValidationMessageFor(m => m.Code, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="WarehouseId">Kho kiểm kê <span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(m => m.WarehouseId,
+                                        (SelectList)ViewBag.Warehouses,
+                                        "-- Chọn kho cần kiểm kê --",
+                                        new { @class = "form-control", id = "warehouseSelect", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.WarehouseId, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="CheckDate">Ngày kiểm kê <span class="text-danger">*</span></label>
+                                    @Html.TextBoxFor(m => m.CheckDate, "{0:yyyy-MM-dd}",
+                                        new { @type = "date", @class = "form-control", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.CheckDate, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="Note">Ghi chú</label>
+                                    @Html.TextAreaFor(m => m.Note, new { @class = "form-control", rows = 2, placeholder = "Ghi chú về lý do, phạm vi kiểm kê..." })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chi tiết kiểm kê -->
+            <div class="col-lg-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-success d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-boxes"></i> Chi tiết kiểm kê sản phẩm
+                        </h6>
+                        <button type="button" class="btn btn-sm btn-light" id="btnAddProduct">
+                            <i class="fas fa-plus"></i> Thêm sản phẩm
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="detailTable">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th width="5%" class="text-center">STT</th>
+                                        <th width="30%">Sản phẩm - Biến thể <span class="text-danger">*</span></th>
+                                        <th width="12%" class="text-center">SL Hệ thống</th>
+                                        <th width="15%" class="text-center">SL Thực tế <span class="text-danger">*</span></th>
+                                        <th width="12%" class="text-center">Chênh lệch</th>
+                                        <th width="20%">Ghi chú</th>
+                                        <th width="6%" class="text-center">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailTableBody">
+                                    <tr id="emptyRow">
+                                        <td colspan="7" class="text-center text-muted">
+                                            <i class="fas fa-inbox fa-3x mb-2"></i>
+                                            <p>Chưa có sản phẩm nào. Vui lòng chọn kho và nhấn "Thêm sản phẩm"</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-info mt-2">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Hướng dẫn:</strong> Chọn kho trước, sau đó thêm các sản phẩm cần kiểm kê và nhập số lượng thực tế.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút hành động -->
+            <div class="col-lg-12">
+                <div class="text-right mb-4">
+                    <a href="@Url.Action("Index")" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times"></i> Hủy
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg" id="btnSubmit">
+                        <i class="fas fa-save"></i> Lưu phiếu kiểm kê
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script>
+        var rowIndex = 0;
+        var variantList = [];
+
+        $(document).ready(function () {
+            // Load sản phẩm khi chọn kho
+            $('#warehouseSelect').change(function () {
+                var warehouseId = $(this).val();
+                if (warehouseId) {
+                    loadVariantsByWarehouse(warehouseId);
+                } else {
+                    variantList = [];
+                    $('#detailTableBody').html('<tr id="emptyRow"><td colspan="7" class="text-center text-muted"><i class="fas fa-inbox fa-3x mb-2"></i><p>Vui lòng chọn kho</p></td></tr>');
+                }
+            });
+
+            // Thêm dòng sản phẩm
+            $('#btnAddProduct').click(function () {
+                if (variantList.length === 0) {
+                    alert('Vui lòng chọn kho trước!');
+                    return;
+                }
+                addDetailRow();
+            });
+
+            // Xóa dòng
+            $(document).on('click', '.btn-remove-row', function () {
+                if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+                    $(this).closest('tr').remove();
+                    updateRowNumbers();
+
+                    if ($('#detailTableBody tr').length === 0) {
+                        $('#detailTableBody').html('<tr id="emptyRow"><td colspan="7" class="text-center text-muted"><i class="fas fa-inbox fa-3x mb-2"></i><p>Chưa có sản phẩm nào</p></td></tr>');
+                    }
+                }
+            });
+
+            // Tính chênh lệch khi nhập số lượng thực tế
+            $(document).on('input', '.actual-quantity', function () {
+                var row = $(this).closest('tr');
+                var systemQty = parseInt(row.find('.system-quantity').text()) || 0;
+                var actualQty = parseInt($(this).val()) || 0;
+                var difference = actualQty - systemQty;
+
+                var diffCell = row.find('.difference');
+                diffCell.text(difference);
+
+                // Đổi màu và icon theo chênh lệch
+                diffCell.removeClass('text-success text-danger text-muted badge-success badge-danger badge-secondary');
+                if (difference > 0) {
+                    diffCell.addClass('badge badge-success');
+                    diffCell.html('<i class="fas fa-arrow-up"></i> +' + difference);
+                } else if (difference < 0) {
+                    diffCell.addClass('badge badge-danger');
+                    diffCell.html('<i class="fas fa-arrow-down"></i> ' + difference);
+                } else {
+                    diffCell.addClass('badge badge-secondary');
+                    diffCell.html('<i class="fas fa-equals"></i> 0');
+                }
+            });
+
+            // Cập nhật SL hệ thống khi chọn biến thể
+            $(document).on('change', '.variant-select', function () {
+                var row = $(this).closest('tr');
+                var variantId = $(this).val();
+
+                if (!variantId) {
+                    row.find('.system-quantity').text('0');
+                    row.find('.actual-quantity').val('0').trigger('input');
+                    return;
+                }
+
+                // Kiểm tra trùng lặp
+                var isDuplicate = false;
+                $('.variant-select').not(this).each(function() {
+                    if ($(this).val() == variantId) {
+                        isDuplicate = true;
+                        return false;
+                    }
+                });
+
+                if (isDuplicate) {
+                    alert('Sản phẩm này đã được thêm vào danh sách!');
+                    $(this).val('');
+                    row.find('.system-quantity').text('0');
+                    row.find('.actual-quantity').val('0').trigger('input');
+                    return;
+                }
+
+                var variant = variantList.find(v => v.VariantId == variantId);
+
+                if (variant) {
+                    row.find('.system-quantity').text(variant.StockQuantity || 0);
+                    row.find('.actual-quantity').val(variant.StockQuantity || 0).trigger('input');
+                }
+            });
+
+            // Validate form
+            $('#stockCheckForm').submit(function (e) {
+                var rowCount = $('#detailTableBody tr').not('#emptyRow').length;
+
+                if (rowCount === 0) {
+                    e.preventDefault();
+                    alert('Vui lòng thêm ít nhất một sản phẩm để kiểm kê!');
+                    return false;
+                }
+
+                // Kiểm tra có sản phẩm nào chưa chọn
+                var hasEmptyVariant = false;
+                $('.variant-select').each(function() {
+                    if (!$(this).val()) {
+                        hasEmptyVariant = true;
+                        return false;
+                    }
+                });
+
+                if (hasEmptyVariant) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn sản phẩm cho tất cả các dòng!');
+                    return false;
+                }
+
+                $('#btnSubmit').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
+            });
+        });
+
+        // Load danh sách biến thể theo kho
+        function loadVariantsByWarehouse(warehouseId) {
+            $.ajax({
+                url: '@Url.Action("GetVariantsByWarehouse", "StockCheck")',
+                type: 'GET',
+                data: { warehouseId: warehouseId },
+                beforeSend: function() {
+                    $('#detailTableBody').html('<tr><td colspan="7" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải danh sách sản phẩm...</td></tr>');
+                },
+                success: function (data) {
+                    variantList = data;
+                    $('#detailTableBody').html('<tr id="emptyRow"><td colspan="7" class="text-center text-muted"><i class="fas fa-inbox fa-3x mb-2"></i><p>Nhấn "Thêm sản phẩm" để bắt đầu kiểm kê</p></td></tr>');
+                    rowIndex = 0;
+                },
+                error: function () {
+                    alert('Lỗi khi tải danh sách sản phẩm!');
+                    $('#detailTableBody').html('<tr id="emptyRow"><td colspan="7" class="text-center text-danger"><i class="fas fa-exclamation-triangle"></i> Lỗi tải dữ liệu</td></tr>');
+                }
+            });
+        }
+
+        // Thêm dòng chi tiết
+        function addDetailRow() {
+            $('#emptyRow').remove();
+
+            var optionsHtml = '<option value="">-- Chọn sản phẩm --</option>';
+            variantList.forEach(function (variant) {
+                optionsHtml += `<option value="${variant.VariantId}">${variant.ProductName} - SKU: ${variant.SKU}</option>`;
+            });
+
+            var html = `
+                <tr>
+                    <td class="text-center align-middle row-number">${rowIndex + 1}</td>
+                    <td>
+                        <select name="details[${rowIndex}].VariantId" class="form-control variant-select" required>
+                            ${optionsHtml}
+                        </select>
+                    </td>
+                    <td class="text-center align-middle">
+                        <span class="badge badge-info system-quantity">0</span>
+                    </td>
+                    <td>
+                        <input type="number" name="details[${rowIndex}].ActualQuantity"
+                               class="form-control text-center actual-quantity"
+                               min="0" value="0" required />
+                    </td>
+                    <td class="text-center align-middle">
+                        <span class="badge badge-secondary difference">0</span>
+                    </td>
+                    <td>
+                        <input type="text" name="details[${rowIndex}].Note"
+                               class="form-control" placeholder="Ghi chú (tùy chọn)" />
+                    </td>
+                    <td class="text-center align-middle">
+                        <button type="button" class="btn btn-sm btn-danger btn-remove-row" title="Xóa">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            $('#detailTableBody').append(html);
+            rowIndex++;
+        }
+
+        // Cập nhật số thứ tự
+        function updateRowNumbers() {
+            $('#detailTableBody tr').not('#emptyRow').each(function (index) {
+                $(this).find('.row-number').text(index + 1);
+            });
+            rowIndex = $('#detailTableBody tr').not('#emptyRow').length;
+        }
+    </script>
+}
+
+<style>
+    .table thead th {
+        vertical-align: middle;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.4em 0.6em;
+    }
+</style>

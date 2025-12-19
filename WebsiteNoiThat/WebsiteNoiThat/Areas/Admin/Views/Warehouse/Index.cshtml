@@ -1,0 +1,167 @@
+﻿@model List<Models.EF.Warehouse>
+
+@{
+    ViewBag.Title = "Quản lý Kho hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Danh sách Kho hàng</h1>
+        <a href="@Url.Action("Create", "Warehouse")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Thêm kho mới
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle mr-2"></i> @TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle mr-2"></i> @TempData["Error"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Dữ liệu kho bãi</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th width="10%">Mã Kho</th>
+                            <th width="20%">Tên Kho</th>
+                            <th width="25%">Địa chỉ</th>
+                            <th width="15%">Người quản lý</th>
+                            <th width="10%">Loại kho</th>
+                            <th width="10%" class="text-center">Trạng thái</th>
+                            <th width="10%" class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="font-weight-bold text-primary">@item.Code</td>
+                                    <td>
+                                        @item.Name
+                                        <div class="small text-muted">
+                                            <i class="fas fa-phone fa-xs"></i> @(item.Phone ?? "N/A")
+                                        </div>
+                                    </td>
+                                    <td>@item.Address</td>
+                                    <td>
+                                        <div>@item.ManagerName</div>
+                                        <small class="text-muted">@item.ManagerPhone</small>
+                                    </td>
+                                    <td>
+                                        @if (item.Type == "Main")
+                                        {
+                                            <span class="badge badge-primary">Kho tổng</span>
+                                        }
+                                        else if (item.Type == "Store")
+                                        {
+                                            <span class="badge badge-info">Cửa hàng</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-secondary">Kho phụ</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.IsActive == true)
+                                        {
+                                            <span class="badge badge-success px-2 py-1">Hoạt động</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger px-2 py-1">Ngừng hoạt động</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="@Url.Action("Inventory", "Warehouse", new { warehouseId = item.WarehouseId })"
+                                               class="btn btn-info btn-sm"
+                                               title="Xem tồn kho"
+                                               data-toggle="tooltip">
+                                                <i class="fas fa-boxes"></i>
+                                            </a>
+
+                                            <a href="@Url.Action("Edit", "Warehouse", new { id = item.WarehouseId })"
+                                               class="btn btn-warning btn-sm"
+                                               title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            <a href="@Url.Action("Delete", "Warehouse", new { id = item.WarehouseId })"
+                                               class="btn btn-danger btn-sm"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa kho này? (Dữ liệu sẽ được ẩn đi)');"
+                                               title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="fas fa-warehouse fa-3x mb-3 d-block text-gray-300"></i>
+                                    Chưa có dữ liệu kho hàng. Hãy thêm mới!
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Areas/Admin/Content/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Areas/Admin/Content/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Khởi tạo tooltip
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Khởi tạo DataTable
+        $('#dataTable').DataTable({
+            "language": {
+                "sProcessing":   "Đang xử lý...",
+                "sLengthMenu":   "Xem _MENU_ mục",
+                "sZeroRecords":  "Không tìm thấy dòng nào phù hợp",
+                "sInfo":         "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                "sInfoEmpty":    "Đang xem 0 đến 0 trong tổng số 0 mục",
+                "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                "sSearch":       "Tìm kiếm:",
+                "oPaginate": {
+                    "sFirst":    "Đầu",
+                    "sPrevious": "Trước",
+                    "sNext":     "Tiếp",
+                    "sLast":     "Cuối"
+                }
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": 6 } // Tắt sắp xếp cột Hành động
+            ]
+        });
+    });
+</script>

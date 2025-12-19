@@ -1,0 +1,108 @@
+﻿@model Models.EF.Attribute
+
+@{
+    ViewBag.Title = "Thêm mới thuộc tính";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Thêm mới <span class="text-primary">Thuộc tính</span>
+        </h1>
+        <a href="@Url.Action("Index", "Attribute")" class="btn btn-sm btn-secondary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @Html.ValidationSummary(false, "Vui lòng kiểm tra lại thông tin:", new { @class = "mb-0" })
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card shadow mb-4 border-left-success">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Thông tin thuộc tính</h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Create", "Attribute", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Tên thuộc tính <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @placeholder = "VD: Màu sắc, Kích thước...", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger small" })
+                            <small class="form-text text-muted">Tên hiển thị cho người dùng chọn.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Mã thuộc tính (Code) <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @placeholder = "VD: color, size, material...", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger small" })
+                            <small class="form-text text-muted">Mã duy nhất dùng để lập trình (viết liền không dấu).</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Loại hiển thị</label>
+                            @{
+                                var displayTypes = new List<SelectListItem>
+                                                {
+                                    new SelectListItem { Text = "Nút bấm (Text/Số)", Value = "button" },
+                                    new SelectListItem { Text = "Ô màu sắc (Color)", Value = "color" }
+                                };
+                            }
+                            @Html.DropDownListFor(model => model.DisplayType, displayTypes, new { @class = "form-control" })
+                            <small class="form-text text-muted">Chọn "Ô màu sắc" nếu đây là thuộc tính Màu.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Thứ tự hiển thị</label>
+                            @Html.TextBoxFor(model => model.DisplayOrder, new { @class = "form-control", @type = "number", @Value = "0" })
+                        </div>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                @Html.CheckBox("IsActive", true, new { @class = "custom-control-input", @id = "IsActive" })
+                                <label class="custom-control-label" for="IsActive">Kích hoạt ngay</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                @Html.CheckBox("IsRequired", true, new { @class = "custom-control-input", @id = "IsRequired" })
+                                <label class="custom-control-label" for="IsRequired">Bắt buộc chọn (Required)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <div class="form-group text-center mt-3">
+                    <button type="submit" class="btn btn-success btn-icon-split px-4 py-2">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-save"></i>
+                        </span>
+                        <span class="text font-weight-bold">Lưu Thuộc Tính</span>
+                    </button>
+
+                    <a href="@Url.Action("Index", "Attribute")" class="btn btn-secondary btn-icon-split px-4 py-2 ml-2">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-times"></i>
+                        </span>
+                        <span class="text">Hủy bỏ</span>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

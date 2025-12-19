@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Models.EF.User>
+
+<ul class="user-list">
+    @foreach (var user in Model)
+    {
+        // Lấy tin nhắn mới nhất trực tiếp từ DB
+        var lastMessage = user.ChatMessages.OrderByDescending(m => m.SentAt).FirstOrDefault();
+        string lastMsgText;
+        if (lastMessage != null)
+        {
+            var prefix = lastMessage.IsFromAdmin ? "Bạn: " : "Khách: ";
+            var content = lastMessage.MessageText;
+            if (content.Length > 30) { content = content.Substring(0, 30) + "..."; }
+            lastMsgText = prefix + content;
+        }
+        else
+        {
+            lastMsgText = "Chưa có tin nhắn";
+        }
+
+        <li class="user-item" data-userid="@user.UserId" data-username="@user.Username">
+            <img src="~/Content/images/default-avatar.jpg" alt="Avatar" />
+            <div class="user-info">
+                <div class="name">@user.Name (@user.Username)</div>
+                <div class="last-message">@Html.Raw(lastMsgText)</div>
+            </div>
+        </li>
+    }
+</ul>

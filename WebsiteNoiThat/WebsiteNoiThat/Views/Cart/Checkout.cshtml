@@ -1,0 +1,608 @@
+﻿@model WebsiteNoiThat.Models.ViewModels.CheckoutViewModel
+@{
+    ViewBag.Title = "Thanh toán";
+    var cartItems = ViewBag.CartItems as List<WebsiteNoiThat.Models.GHViewModel>;
+    decimal total = 0;
+    if (cartItems != null)
+    {
+        total = cartItems.Sum(x => x.Price * x.Quantity);
+    }
+}
+
+<style>
+    /* --- CSS CHO TRANG THANH TOÁN --- */
+    .checkout-container {
+        max-width: 1400px;
+        margin: 30px auto;
+        padding: 0 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .checkout-header {
+        background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+    }
+
+        .checkout-header h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .checkout-header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+
+    .section-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        border: 1px solid #e9eef8;
+        transition: all 0.3s ease;
+    }
+
+        .section-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #2d3748;
+        border-bottom: 3px solid #8B4513;
+        padding-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 15px;
+    }
+
+        .cart-table thead {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .cart-table th {
+            padding: 14px 12px;
+            text-align: left;
+            font-weight: 700;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cart-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f1f3f5;
+            vertical-align: middle;
+        }
+
+        .cart-table tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .product-image {
+        width: 70px;
+        height: 70px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid #e9ecef;
+        flex-shrink: 0;
+    }
+
+    .product-details {
+        flex: 1;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 6px;
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    .product-variant {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .variant-badge {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        color: #495057;
+        border: 1px solid #dee2e6;
+        font-weight: 500;
+    }
+
+    .price-text {
+        font-weight: 700;
+        color: #ee4d2d;
+        font-size: 1.1rem;
+    }
+
+    .unit-price {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+        border-radius: 10px;
+        margin-top: 15px;
+        border: 2px solid #fee;
+        gap: 15px;
+    }
+
+    .total-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .total-value {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #ee4d2d;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #2d3748;
+        display: block;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        background: #fff;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #8B4513;
+            box-shadow: 0 0 0 4px rgba(139, 69, 19, 0.1);
+            background: #fdf8f3;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .payment-option {
+        display: flex;
+        align-items: center;
+        padding: 15px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: white;
+    }
+
+        .payment-option:hover {
+            border-color: #8B4513;
+            background: #fdf8f3;
+            transform: translateX(5px);
+        }
+
+        .payment-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #8B4513;
+        }
+
+        .payment-option span {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .payment-option input[type="radio"]:checked + span {
+            color: #8B4513;
+            font-weight: 600;
+        }
+
+    .payment-details {
+        display: none;
+        margin-top: 15px;
+        padding: 20px;
+        background: linear-gradient(135deg, #fdf8f3 0%, #f5ebe0 100%);
+        border-radius: 10px;
+        border-left: 4px solid #8B4513;
+    }
+
+        .payment-details h5 {
+            margin: 0 0 15px 0;
+            color: #8B4513;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+    .btn-submit {
+        width: 100%;
+        background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.4);
+        }
+
+    .btn-back {
+        width: 100%;
+        background: white;
+        color: #8B4513;
+        border: 2px solid #8B4513;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+        .btn-back:hover {
+            background: #8B4513;
+            color: white;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .empty-cart {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+        .empty-cart h4 {
+            color: #495057;
+            margin: 20px 0 10px;
+            font-size: 1.5rem;
+        }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+        color: #c33;
+        padding: 16px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border-left: 4px solid #c33;
+        font-weight: 500;
+    }
+
+    .checkout-layout {
+        display: grid;
+        grid-template-columns: 1fr 450px;
+        gap: 25px;
+    }
+
+    .text-danger {
+        color: #f56565 !important;
+        font-size: 13px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    @@media (max-width: 992px) {
+        .checkout-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .checkout-container {
+            padding: 0 15px;
+        }
+    }
+</style>
+
+<div class="checkout-container">
+    <div class="checkout-header">
+        <h3>🛍️ Thanh toán đơn hàng</h3>
+        <p>Vui lòng kiểm tra thông tin kỹ trước khi đặt hàng</p>
+    </div>
+
+    @Html.ValidationSummary(true, "", new { @class = "alert-danger" })
+
+    @if (cartItems != null && cartItems.Any())
+    {
+        using (Html.BeginForm("Checkout", "Cart", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="checkout-layout">
+                <!-- Cột trái: Sản phẩm và Thông tin giao hàng -->
+                <div class="left-column">
+                    <!-- Bảng sản phẩm -->
+                    <div class="section-card">
+                        <h3 class="section-title">
+                            <span>📋</span> <span>Sản phẩm đã chọn (@cartItems.Count)</span>
+                        </h3>
+                        <table class="cart-table">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th style="text-align: center; width: 80px;">Số lượng</th>
+                                    <th style="text-align: right; width: 120px;">Đơn giá</th>
+                                    <th style="text-align: right; width: 140px;">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in cartItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="product-info">
+                                                @if (!string.IsNullOrEmpty(item.Photo))
+                                                {
+                                                    <img src="@Url.Content("~/image/" + item.Photo)" alt="@item.ProductName" class="product-image" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="@Url.Content("~/image/no-image.jpg")" alt="No Image" class="product-image" />
+                                                }
+                                                <div class="product-details">
+                                                    <div class="product-name">@item.ProductName</div>
+                                                    @if (!string.IsNullOrEmpty(item.VariantInfo) && item.VariantInfo != "Mặc định")
+                                                    {
+                                                        <div class="product-variant">
+                                                            @foreach (var attr in item.VariantInfo.Split(','))
+                                                            {
+                                                                <span class="variant-badge">@attr.Trim()</span>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <strong style="font-size: 1.1rem;">@item.Quantity</strong>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <span class="unit-price">@item.Price.ToString("N0")₫</span>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <span class="price-text">@((item.Price * item.Quantity).ToString("N0"))₫</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="total-row">
+                            <span class="total-label">Tổng thanh toán:</span>
+                            <span class="total-value">@total.ToString("N0")₫</span>
+                        </div>
+                    </div>
+
+                    <!-- Form thông tin giao hàng -->
+                    <div class="section-card">
+                        <h3 class="section-title">
+                            <span>📦</span> <span>Thông tin giao hàng</span>
+                        </h3>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.ShipName, "Họ và tên người nhận *", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.ShipName, new { @class = "form-control", placeholder = "Nhập họ và tên đầy đủ", required = "required" })
+                            @Html.ValidationMessageFor(m => m.ShipName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShipPhone, "Số điện thoại *", new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.ShipPhone, new { @class = "form-control", placeholder = "Ví dụ: 0912345678", required = "required" })
+                                @Html.ValidationMessageFor(m => m.ShipPhone, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShipEmail, "Email *", new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.ShipEmail, new { @class = "form-control", type = "email", placeholder = "email@example.com", required = "required" })
+                                @Html.ValidationMessageFor(m => m.ShipEmail, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.ShipAddress, "Địa chỉ giao hàng *", new { @class = "form-label" })
+                            @Html.TextAreaFor(m => m.ShipAddress, new { @class = "form-control", rows = "3", placeholder = "Nhập địa chỉ chi tiết: số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố", required = "required" })
+                            @Html.ValidationMessageFor(m => m.ShipAddress, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ghi chú đơn hàng (Tùy chọn)</label>
+                            <textarea name="Note" class="form-control" rows="2" placeholder="Ví dụ: Giao hàng giờ hành chính, gọi trước 15 phút..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cột phải: Phương thức thanh toán -->
+                <div class="right-column">
+                    <div class="section-card">
+                        <h3 class="section-title">
+                            <span>💳</span> <span>Phương thức thanh toán</span>
+                        </h3>
+
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" id="payment-cod" value="cod" checked />
+                            <span>💵 Thanh toán khi nhận hàng (COD)</span>
+                        </label>
+
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" id="payment-bank" value="bank" />
+                            <span>🏦 Chuyển khoản ngân hàng</span>
+                        </label>
+
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" id="payment-momo" value="momo" />
+                            <span>📱 Ví điện tử MoMo</span>
+                        </label>
+
+                        <div id="bankInfo" class="payment-details">
+                            <h5>Thông tin chuyển khoản</h5>
+                            <div class="form-group">
+                                <label class="form-label">Ngân hàng</label>
+                                <select class="form-control" disabled>
+                                    <option value="">-- Chọn ngân hàng --</option>
+                                    <option>Vietcombank</option>
+                                    <option>Techcombank</option>
+                                    <option>MB Bank</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Số tài khoản</label>
+                                <input type="text" class="form-control" placeholder="Nhập số tài khoản" disabled />
+                            </div>
+                        </div>
+
+                        <div id="momoInfo" class="payment-details">
+                            <h5>Thông tin ví MoMo</h5>
+                            <div class="form-group">
+                                <label class="form-label">Số điện thoại MoMo</label>
+                                <input type="text" class="form-control" placeholder="Nhập SĐT MoMo" disabled />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" style="margin-top:20px;">
+                            ✅ Đặt hàng ngay
+                        </button>
+
+                        <a href="@Url.Action("Index", "Cart")" class="btn-back" style="margin-top:12px;">
+                            ← Quay lại giỏ hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-cart">
+            <div style="font-size: 5rem; color: #ddd; margin-bottom: 20px;">🛒</div>
+            <h4>Giỏ hàng trống</h4>
+            <p style="color: #6c757d;">Bạn chưa có sản phẩm nào trong giỏ hàng để thanh toán.</p>
+            <a href="@Url.Action("Index", "Home")" class="btn-back" style="max-width: 300px; margin: 20px auto 0;">
+                Tiếp tục mua sắm
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Hàm ẩn hiện chi tiết thanh toán
+            function togglePaymentFields(val) {
+                if (val === 'bank') {
+                    $('#bankInfo').slideDown(300).find('input, select').prop('disabled', false);
+                    $('#momoInfo').slideUp(300).find('input, select').prop('disabled', true);
+                } else if (val === 'momo') {
+                    $('#momoInfo').slideDown(300).find('input, select').prop('disabled', false);
+                    $('#bankInfo').slideUp(300).find('input, select').prop('disabled', true);
+                } else {
+                    $('#bankInfo, #momoInfo').slideUp(300).find('input, select').prop('disabled', true);
+                }
+            }
+
+            // Sự kiện khi thay đổi radio button
+            $('input[name="paymentMethod"]').change(function () {
+                togglePaymentFields($(this).val());
+            });
+
+            // Khởi tạo hiển thị ban đầu
+            togglePaymentFields($('input[name="paymentMethod"]:checked').val());
+
+            // Validate form trước khi submit
+            $('form').submit(function(e) {
+                var isValid = true;
+                var errorMsg = '';
+
+                if (!$('input[name="ShipName"]').val().trim()) {
+                    errorMsg += '• Vui lòng nhập họ tên\n';
+                    isValid = false;
+                }
+                if (!$('input[name="ShipPhone"]').val().trim()) {
+                    errorMsg += '• Vui lòng nhập số điện thoại\n';
+                    isValid = false;
+                }
+                if (!$('input[name="ShipEmail"]').val().trim()) {
+                    errorMsg += '• Vui lòng nhập email\n';
+                    isValid = false;
+                }
+                if (!$('textarea[name="ShipAddress"]').val().trim()) {
+                    errorMsg += '• Vui lòng nhập địa chỉ giao hàng\n';
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    alert('Vui lòng điền đầy đủ thông tin:\n\n' + errorMsg);
+                    e.preventDefault();
+                    return false;
+                }
+
+                return confirm('Xác nhận đặt hàng với tổng giá trị: @total.ToString("N0")₫?');
+            });
+        });
+    </script>
+}

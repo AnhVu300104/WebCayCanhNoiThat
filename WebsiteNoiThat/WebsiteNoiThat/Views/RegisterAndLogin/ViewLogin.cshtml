@@ -1,0 +1,99 @@
+﻿@{
+    var session = (UserLogin)Session[WebsiteNoiThat.Common.Commoncontent.user_sesion];
+}
+
+<div class="user-menu">
+    @if (session != null)
+    {
+        <a id="a_account" href="/RegisterAndLogin/ViewCurentUser">
+            <img src="~/Content/client/assets/img/round-account-button-with-user-inside.png" />
+        </a>
+        <span class="username">@session.Username</span>
+
+        <ul class="dropdown-user">
+            <li>
+                <a href="/Cart/HistoryCart"><i class="fa fa-hourglass"></i> Lịch sử mua hàng</a>
+            </li>
+            @*<li>
+                <a href="#"><i class="fa fa-credit-card"></i> Thẻ tích điểm: @ViewBag.Card</a>
+            </li>
+            <li>
+                <a href="@Url.Action("Card", "RegisterAndLogin", new { @UserId = session.UserId })"><i class="fa fa-sign-in"></i> Đăng ký thẻ tích điểm</a>
+            </li>*@
+            <li>
+                <a href="/RegisterAndLogin/Logout"><i class="fa fa-sign-out"></i> Đăng xuất</a>
+            </li>
+        </ul>
+    }
+    else
+    {
+        <a id="a_account" href="/RegisterAndLogin/Login">
+            <img src="~/Content/client/assets/img/round-account-button-with-user-inside.png" />
+        </a>
+    }
+</div>
+
+<style>
+    .user-menu {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        right:100px;
+        top:10px;
+    }
+
+        .user-menu .username {
+            margin-left: 5px;
+            font-weight: bold;
+        }
+
+        .user-menu .dropdown-user {
+            display: none; /* ẩn mặc định */
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 220px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px 0;
+            list-style: none;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-menu:hover .dropdown-user {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    .dropdown-user li {
+        padding: 8px 15px;
+    }
+
+        .dropdown-user li a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+            .dropdown-user li a i {
+                margin-right: 8px;
+            }
+
+        .dropdown-user li:hover {
+            background-color: #f1f1f1;
+        }
+    .user-menu a#a_account img {
+       
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+</style>

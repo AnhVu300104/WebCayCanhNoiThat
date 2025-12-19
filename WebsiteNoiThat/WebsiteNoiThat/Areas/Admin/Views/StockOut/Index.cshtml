@@ -1,0 +1,141 @@
+﻿@model List<Models.EF.StockOut>
+
+@{
+    ViewBag.Title = "Quản lý Xuất kho";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Danh sách Phiếu xuất kho</h1>
+        <a href="@Url.Action("Create", "StockOut")" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Tạo phiếu xuất mới
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle mr-2"></i> @TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle mr-2"></i> @TempData["Error"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lịch sử xuất kho</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="12%">Mã phiếu</th>
+                            <th width="15%">Ngày tạo</th>
+                            <th width="15%">Kho xuất</th>
+                            <th width="13%">Loại xuất</th>
+                            <th width="20%">Ghi chú</th>
+                            <th width="10%" class="text-center">Người tạo</th>
+                            <th width="10%" class="text-center">Trạng thái</th>
+                            <th width="10%" class="text-center">Tác vụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="font-weight-bold text-primary">
+                                        <a href="@Url.Action("Details", "StockOut", new { id = item.StockOutId })">
+                                            @item.Code
+                                        </a>
+                                    </td>
+                                    <td>@string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedAt)</td>
+                                    <td>@(item.Warehouse != null ? item.Warehouse.Name : "N/A")</td>
+                                    <td>
+                                        @if (item.Type == "Sale")
+                                        {<span class="badge badge-info">Bán hàng</span> }
+                                        else if (item.Type == "Transfer")
+                                        { <span class="badge badge-secondary">Chuyển kho</span> }
+                                        else if (item.Type == "Damaged")
+                                        { <span class="badge badge-warning">Hỏng/Hủy</span> }
+                                        else
+                                        { <span class="badge badge-light">@item.Type</span>}
+                                    </td>
+                                    <td>
+                                        <span class="d-inline-block text-truncate" style="max-width: 200px;" title="@item.Note">
+                                            @item.Note
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-light border">@(item.UserCreated != null ? item.UserCreated.Username : "Admin")</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.Status == "pending")
+                                        {
+                                            <span class="badge badge-warning px-2 py-1">Chờ duyệt</span>
+                                        }
+                                        else if (item.Status == "approved")
+                                        {
+                                            <span class="badge badge-success px-2 py-1">Đã xuất</span>
+                                        }
+                                        else if (item.Status == "cancelled")
+                                        {
+                                            <span class="badge badge-danger px-2 py-1">Đã hủy</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-secondary">@item.Status</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="@Url.Action("Details", "StockOut", new { id = item.StockOutId })"
+                                           class="btn btn-info btn-sm btn-circle"
+                                           title="Xem chi tiết & Duyệt">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Areas/Admin/Content/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Areas/Admin/Content/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Khởi tạo DataTable
+        $('#dataTable').DataTable({
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ dòng",
+                "zeroRecords": "Không tìm thấy dữ liệu",
+                "info": "Trang _PAGE_ / _PAGES_",
+                "infoEmpty": "Không có dữ liệu",
+                "infoFiltered": "(lọc từ _MAX_ dòng)",
+                "search": "Tìm kiếm:",
+                "paginate": { "next": "Sau", "previous": "Trước" }
+            },
+            "order": [[1, "desc"]] // Sắp xếp theo cột Ngày tạo giảm dần
+        });
+    });
+</script>

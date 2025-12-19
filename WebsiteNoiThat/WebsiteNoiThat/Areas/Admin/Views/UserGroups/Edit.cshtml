@@ -1,0 +1,414 @@
+﻿@model Models.EF.UserGroup
+@{
+    ViewBag.Title = "Sửa nhóm người dùng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .usergroup-container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px 10px 0 0;
+        margin-bottom: 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .page-header h2 i {
+        margin-right: 10px;
+    }
+
+    .btn-back-header {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-back-header:hover {
+        background: white;
+        color: #667eea;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .form-wrapper {
+        background: white;
+        padding: 40px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .form-horizontal .form-group {
+        margin-bottom: 30px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .control-label {
+        font-weight: 600;
+        color: #333;
+        padding-top: 10px;
+        font-size: 15px;
+        min-width: 180px;
+        text-align: right;
+        padding-right: 25px;
+    }
+
+    .control-label::after {
+        content: " *";
+        color: #dc3545;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control:disabled {
+        background-color: #f5f5f5;
+        cursor: not-allowed;
+        color: #6c757d;
+    }
+
+    .input-wrapper {
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .text-danger {
+        color: #dc3545;
+        font-size: 13px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    /* Field descriptions */
+    .field-description {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+        font-style: italic;
+    }
+
+    /* Button group */
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 35px;
+        padding-top: 25px;
+        border-top: 2px solid #f0f0f0;
+        justify-content: flex-end;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 40px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-submit i {
+        margin-right: 8px;
+    }
+
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-block;
+        border: none;
+    }
+
+    .btn-cancel:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel i {
+        margin-right: 8px;
+    }
+
+    /* Validation summary */
+    .validation-summary-errors {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px 20px;
+        border-radius: 6px;
+        margin-bottom: 25px;
+    }
+
+    .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .validation-summary-errors li {
+        color: #856404;
+        margin-bottom: 5px;
+    }
+
+    /* Info box */
+    .info-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px 20px;
+        border-radius: 6px;
+        margin-bottom: 25px;
+    }
+
+    .info-box i {
+        color: #ff9800;
+        margin-right: 10px;
+    }
+
+    .info-box p {
+        margin: 0;
+        color: #856404;
+        font-size: 14px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .btn-back-header {
+            width: 100%;
+        }
+
+        .form-horizontal .form-group {
+            flex-direction: column;
+        }
+
+        .control-label {
+            text-align: left;
+            padding-right: 0;
+            margin-bottom: 8px;
+            min-width: auto;
+        }
+
+        .input-wrapper {
+            max-width: 100%;
+        }
+
+        .btn-group {
+            flex-direction: column-reverse;
+        }
+
+        .btn-submit, .btn-cancel {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    /* Loading state */
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Animation */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-wrapper {
+        animation: fadeIn 0.5s ease-out;
+    }
+</style>
+
+<div class="usergroup-container">
+    <div class="page-header">
+        <h2>
+            <i class="fa fa-edit"></i>
+            Sửa nhóm người dùng
+        </h2>
+        <a href="@Url.Action("Index", "UserGroups")" class="btn-back-header">
+            <i class="fa fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="form-wrapper">
+        @using (Html.BeginForm("Edit", "UserGroups", FormMethod.Post, new { id = "editGroupForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger validation-summary-errors" })
+
+            <div class="info-box">
+                <i class="fa fa-exclamation-triangle"></i>
+                <p>Chỉnh sửa thông tin nhóm người dùng. Lưu ý: Mã nhóm không thể thay đổi.</p>
+            </div>
+
+            <div class="form-horizontal">
+                <!-- Mã nhóm -->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GroupId, "Mã nhóm", htmlAttributes: new { @class = "control-label" })
+                    <div class="input-wrapper">
+                        @Html.EditorFor(model => model.GroupId, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                        @Html.HiddenFor(model => model.GroupId)
+                        @Html.ValidationMessageFor(model => model.GroupId, "", new { @class = "text-danger" })
+                        <span class="field-description">Mã định danh không thể thay đổi</span>
+                    </div>
+                </div>
+
+                <!-- Tên nhóm -->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, "Tên nhóm", htmlAttributes: new { @class = "control-label" })
+                    <div class="input-wrapper">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Nhập tên nhóm (VD: Quản trị viên)", @required = "required" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        <span class="field-description">Tên hiển thị của nhóm người dùng</span>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="btn-group">
+                    <a href="@Url.Action("Index", "UserGroups")" class="btn-cancel" id="cancelBtn">
+                        <i class="fa fa-times"></i> Hủy bỏ
+                    </a>
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fa fa-save"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var formChanged = false;
+        var originalName = $('input[name="Name"]').val();
+
+        // Theo dõi thay đổi form
+        $('input[name="Name"]').on('input', function() {
+            formChanged = $(this).val() !== originalName;
+        });
+
+        // Validation khi submit
+        $('#editGroupForm').submit(function (e) {
+            var isValid = true;
+            var errorMessage = '';
+
+            // Kiểm tra tên nhóm
+            var name = $('input[name="Name"]').val().trim();
+            if (name === '') {
+                isValid = false;
+                errorMessage += '- Vui lòng nhập tên nhóm\n';
+            } else if (name.length < 3) {
+                isValid = false;
+                errorMessage += '- Tên nhóm phải có ít nhất 3 ký tự\n';
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Vui lòng kiểm tra lại thông tin:\n\n' + errorMessage);
+                return false;
+            }
+
+            // Confirm trước khi lưu
+            if (!confirm('Bạn có chắc chắn muốn lưu thay đổi cho nhóm "' + name + '"?')) {
+                e.preventDefault();
+                return false;
+            }
+
+            // Disable button để tránh submit nhiều lần
+            $('#submitBtn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...');
+        });
+
+        // Confirm khi nhấn nút Hủy bỏ nếu có thay đổi
+        $('#cancelBtn').click(function(e) {
+            if (formChanged) {
+                if (!confirm('Bạn có thay đổi chưa lưu. Bạn có chắc chắn muốn thoát?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+
+        // Confirm khi nhấn nút Back trên header nếu có thay đổi
+        $('.btn-back-header').click(function(e) {
+            if (formChanged) {
+                if (!confirm('Bạn có thay đổi chưa lưu. Bạn có chắc chắn muốn thoát?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+
+        // Cảnh báo khi rời trang nếu có thay đổi
+        $(window).on('beforeunload', function() {
+            if (formChanged) {
+                return 'Bạn có thay đổi chưa lưu. Bạn có chắc chắn muốn rời khỏi trang?';
+            }
+        });
+
+        // Bỏ cảnh báo khi submit form thành công
+        $('#editGroupForm').on('submit', function() {
+            $(window).off('beforeunload');
+        });
+
+        // Focus vào field tên nhóm
+        $('input[name="Name"]').focus().select();
+    });
+</script>

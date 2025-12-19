@@ -1,0 +1,48 @@
+﻿
+
+
+@model IEnumerable<Models.EF.News>
+
+<h2 class="mb-4" style="
+    text-align: center;
+    color: #A0522D; /* Lấy trực tiếp từ var(--primary-color) */
+    font-family: 'Playfair Display', serif; /* Dùng font tiêu đề */
+    font-size: 28px;
+    font-weight: 700;
+    text-transform: uppercase;">
+    TIN TỨC
+</h2>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <a href="/News/Show?NewsId=@item.NewsId">
+                    <img src="@Url.Content("~/image/" + item.Photo)"
+                         class="card-img-top img-fluid"
+                         alt="@item.Title" />
+                </a>
+
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title fw-bold text-dark">
+                        <a href="/News/Show?NewsId=@item.NewsId"
+                           class="text-decoration-none text-dark">
+                            @item.Title
+                        </a>
+                    </h6>
+
+                    <p class="card-text text-muted">
+                        @item.Detail
+                    </p>
+
+                    <a href="@Url.Action("Show", "News", new { NewsId = item.NewsId })"
+                        class="btn btn-primary btn-sm mt-auto">
+                        Xem chi tiết
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

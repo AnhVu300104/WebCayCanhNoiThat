@@ -1,0 +1,428 @@
+﻿@model Models.EF.News
+@{
+    ViewBag.Title = "Thêm tin tức";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .add-news-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px 10px 0 0;
+        margin-bottom: 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .form-wrapper {
+        background: white;
+        padding: 40px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .form-horizontal .form-group {
+        margin-bottom: 25px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .control-label {
+        font-weight: 600;
+        color: #333;
+        padding-top: 10px;
+        font-size: 14px;
+        min-width: 150px;
+        text-align: right;
+        padding-right: 20px;
+    }
+
+    .control-label::after {
+        content: " *";
+        color: #dc3545;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+    }
+
+    .input-wrapper {
+        flex: 1;
+        max-width: 600px;
+    }
+
+    .text-danger {
+        color: #dc3545;
+        font-size: 13px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    /* File upload styling */
+    .file-upload-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-upload-input {
+        position: absolute;
+        font-size: 100px;
+        opacity: 0;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+    }
+
+    .file-upload-label {
+        display: inline-block;
+        padding: 12px 25px;
+        background: #f8f9fa;
+        border: 2px dashed #667eea;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        text-align: center;
+        color: #667eea;
+        font-weight: 500;
+    }
+
+    .file-upload-label:hover {
+        background: #667eea;
+        color: white;
+        border-style: solid;
+    }
+
+    .file-upload-label i {
+        margin-right: 8px;
+    }
+
+    .file-name {
+        margin-top: 10px;
+        color: #28a745;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    /* Image preview */
+    .image-preview {
+        margin-top: 15px;
+        display: none;
+    }
+
+    .image-preview img {
+        max-width: 300px;
+        max-height: 300px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        object-fit: cover;
+    }
+
+    /* Button styling */
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 35px;
+        padding-top: 25px;
+        border-top: 2px solid #f0f0f0;
+        justify-content: flex-end;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 40px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-back {
+        background: #6c757d;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-block;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    /* Validation summary */
+    .validation-summary-errors {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px 20px;
+        border-radius: 6px;
+        margin-bottom: 25px;
+    }
+
+    .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .validation-summary-errors li {
+        color: #856404;
+        margin-bottom: 5px;
+    }
+
+    /* Date input styling */
+    input[type="date"] {
+        position: relative;
+        padding-right: 40px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .form-horizontal .form-group {
+            flex-direction: column;
+        }
+
+        .control-label {
+            text-align: left;
+            padding-right: 0;
+            margin-bottom: 8px;
+            min-width: auto;
+        }
+
+        .input-wrapper {
+            max-width: 100%;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-submit, .btn-back {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    /* Loading state */
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="add-news-container">
+    <div class="page-header">
+        <h2><i class="fa fa-plus-circle"></i> Thêm tin tức mới</h2>
+    </div>
+
+    <div class="form-wrapper">
+        @using (Html.BeginForm("Add", "Newss", FormMethod.Post, new { enctype = "Multipart/form-data", id = "addNewsForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(false, "", new { @class = "text-danger validation-summary-errors" })
+
+            <div class="form-horizontal">
+                <!-- Mã tin tức -->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NewsId, "Mã tin tức", htmlAttributes: new { @class = "control-label" })
+                    <div class="input-wrapper">
+                        @Html.EditorFor(model => model.NewsId, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Nhập mã tin tức (VD: NEWS001)" } })
+                        @Html.ValidationMessage("NewError", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <!-- Tiêu đề -->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Title, "Tiêu đề", htmlAttributes: new { @class = "control-label" })
+                    <div class="input-wrapper">
+                        @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Nhập tiêu đề tin tức" } })
+                        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <!-- Chi tiết -->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Detail, "Nội dung chi tiết", htmlAttributes: new { @class = "control-label" })
+                    <div class="input-wrapper">
+                        @Html.TextAreaFor(model => model.Detail, new { @class = "form-control", rows = "6", @required = "required", @placeholder = "Nhập nội dung chi tiết của tin tức..." })
+                        @Html.ValidationMessageFor(model => model.Detail, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <!-- Hình ảnh -->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Photo, "Hình ảnh", htmlAttributes: new { @class = "control-label" })
+                    <div class="input-wrapper">
+                        <div class="file-upload-wrapper">
+                            <label for="file" class="file-upload-label">
+                                <i class="fa fa-cloud-upload"></i>
+                                <span id="file-label-text">Chọn hình ảnh tin tức</span>
+                            </label>
+                            <input type="file" id="file" name="file" class="file-upload-input" accept="image/*" required />
+                        </div>
+                        <div class="file-name" id="file-name" style="display: none;"></div>
+                        <div class="image-preview" id="image-preview">
+                            <img id="preview-img" src="" alt="Preview" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ngày cập nhật -->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DateUpdate, "Ngày cập nhật", htmlAttributes: new { @class = "control-label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(m => m.DateUpdate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control", @required = "required" })
+                        @Html.ValidationMessageFor(model => model.DateUpdate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="btn-group">
+                    @Html.ActionLink("Quay lại danh sách", "Show", null, new { @class = "btn-back" })
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fa fa-save"></i> Tạo tin tức
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Đặt ngày hiện tại làm giá trị mặc định
+        var today = new Date().toISOString().split('T')[0];
+        $('input[type="date"]').val(today);
+
+        // Xử lý preview hình ảnh
+        $('#file').change(function () {
+            var file = this.files[0];
+            if (file) {
+                // Hiển thị tên file
+                $('#file-name').text('Đã chọn: ' + file.name).show();
+                $('#file-label-text').text('Thay đổi hình ảnh');
+
+                // Preview hình ảnh
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#preview-img').attr('src', e.target.result);
+                    $('#image-preview').fadeIn();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                $('#file-name').hide();
+                $('#image-preview').hide();
+                $('#file-label-text').text('Chọn hình ảnh tin tức');
+            }
+        });
+
+        // Validation khi submit
+        $('#addNewsForm').submit(function (e) {
+            var isValid = true;
+            var errorMessage = '';
+
+            // Kiểm tra mã tin tức
+            var newsId = $('input[name="NewsId"]').val().trim();
+            if (newsId === '') {
+                isValid = false;
+                errorMessage += '- Vui lòng nhập mã tin tức\n';
+            }
+
+            // Kiểm tra tiêu đề
+            var title = $('input[name="Title"]').val().trim();
+            if (title === '') {
+                isValid = false;
+                errorMessage += '- Vui lòng nhập tiêu đề\n';
+            }
+
+            // Kiểm tra nội dung
+            var detail = $('textarea[name="Detail"]').val().trim();
+            if (detail === '') {
+                isValid = false;
+                errorMessage += '- Vui lòng nhập nội dung chi tiết\n';
+            }
+
+            // Kiểm tra file
+            var file = $('#file')[0].files[0];
+            if (!file) {
+                isValid = false;
+                errorMessage += '- Vui lòng chọn hình ảnh\n';
+            } else {
+                // Kiểm tra định dạng file
+                var allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    isValid = false;
+                    errorMessage += '- Chỉ chấp nhận file ảnh (JPG, PNG, GIF)\n';
+                }
+                // Kiểm tra kích thước file (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    isValid = false;
+                    errorMessage += '- Kích thước file không được vượt quá 5MB\n';
+                }
+            }
+
+            // Kiểm tra ngày
+            var date = $('input[name="DateUpdate"]').val();
+            if (date === '') {
+                isValid = false;
+                errorMessage += '- Vui lòng chọn ngày cập nhật\n';
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Vui lòng kiểm tra lại thông tin:\n\n' + errorMessage);
+                return false;
+            }
+
+            // Disable button để tránh submit nhiều lần
+            $('#submitBtn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...');
+        });
+    });
+</script>

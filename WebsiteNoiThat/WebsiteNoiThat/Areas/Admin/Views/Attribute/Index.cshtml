@@ -1,0 +1,155 @@
+﻿@model List<Models.EF.Attribute>
+
+@{
+    ViewBag.Title = "Quản lý thuộc tính";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Quản lý Thuộc tính Sản phẩm</h1>
+    <p class="mb-4">
+        Quản lý các thuộc tính biến thể như Màu sắc, Kích thước, Chất liệu...
+        Sau khi tạo thuộc tính, hãy nhấn vào biểu tượng <strong><i class="fa fa-list"></i></strong> hoặc tên thuộc tính để thêm các giá trị (VD: Đỏ, Xanh, S, M, L).
+    </p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách thuộc tính</h6>
+            <a href="@Url.Action("Create", "Attribute")" class="btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50"></i> Thêm thuộc tính mới
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="5%" class="text-center">ID</th>
+                            <th width="25%">Tên hiển thị</th>
+                            <th width="15%">Mã (Code)</th>
+                            <th width="15%">Kiểu hiển thị</th>
+                            <th width="10%" class="text-center">Thứ tự</th>
+                            <th width="10%" class="text-center">Trạng thái</th>
+                            <th width="20%" class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="text-center">@item.AttributeId</td>
+                                    <td>
+                                        <a href="@Url.Action("Details", "Attribute", new { id = item.AttributeId })" class="font-weight-bold text-primary">
+                                            @item.Name
+                                        </a>
+                                        <div class="small text-muted">
+                                            Click để quản lý giá trị
+                                        </div>
+                                    </td>
+                                    <td><code>@item.Code</code></td>
+                                    <td>
+                                        @if (item.DisplayType == "color")
+                                        {
+                                            <span class="badge badge-info">Màu sắc (Color box)</span>
+                                        }
+                                        else if (item.DisplayType == "text")
+                                        {
+                                            <span class="badge badge-secondary">Văn bản (Text)</span>
+                                        }
+                                        else if (item.DisplayType == "select")
+                                        {
+                                            <span class="badge badge-dark">Dropdown (Select)</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@item.DisplayType</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">@item.DisplayOrder</td>
+                                    <td class="text-center">
+                                        @if (item.IsActive == true)
+                                        {
+                                            <span class="badge badge-success">Đang dùng</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger">Tạm khóa</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="@Url.Action("Details", "Attribute", new { id = item.AttributeId })" class="btn btn-info btn-circle btn-sm" title="Quản lý giá trị (S, M, L...)">
+                                            <i class="fas fa-list"></i>
+                                        </a>
+
+                                        <a href="@Url.Action("Edit", "Attribute", new { id = item.AttributeId })" class="btn btn-warning btn-circle btn-sm" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        @*<a href="@Url.Action("Delete", "Attribute", new { id = item.AttributeId })"
+                                           class="btn btn-danger btn-circle btn-sm"
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa thuộc tính này? Tất cả các giá trị con sẽ bị xóa theo!');"
+                                           title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </a>*@
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-3">Chưa có thuộc tính nào được tạo.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Areas/Admin/Content/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Areas/Admin/Content/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable({
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ dòng",
+                "zeroRecords": "Không tìm thấy dữ liệu",
+                "info": "Hiển thị trang _PAGE_ / _PAGES_",
+                "infoEmpty": "Không có dữ liệu",
+                "infoFiltered": "(lọc từ _MAX_ tổng số dòng)",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Sau",
+                    "previous": "Trước"
+                }
+            },
+            "order": [[ 4, "asc" ]] // Sắp xếp theo cột Thứ tự (index 4)
+        });
+    });
+</script>

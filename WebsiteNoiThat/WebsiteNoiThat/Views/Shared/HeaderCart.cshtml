@@ -1,0 +1,91 @@
+﻿@model List<WebsiteNoiThat.Models.GH>
+
+<div class="cart">
+    <div class="discart">
+        @{
+            int totalQty = Model.Sum(x => x.Quantity);
+        }
+        <div class="dot">
+            <span class="qty">@totalQty</span>
+        </div>
+    </div>
+
+    <div class="top-cart-content">
+        <strong>Giỏ hàng</strong>
+        <div class="cart-items">
+            @foreach (var item in Model)
+            {
+                <div class="cart-item">
+                    <span class="name">@item.ProductName</span> x <span class="quantity">@item.Quantity</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .cart {
+        top:-25px;
+        position: relative;
+        display: inline-block;
+        font-family: Arial, sans-serif;
+    }
+
+    .discart {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .dot {
+        height: 25px;
+        width: 25px;
+        background-color: red;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .top-cart-content {
+        display: none; /* ẩn mặc định, hover mới hiện */
+        position: absolute;
+        top: 30px;
+        right: 0;
+        width: 200px;
+        background-color: #f8f8f8;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 100;
+    }
+
+    .cart:hover .top-cart-content {
+        display: block;
+    }
+
+    .cart-items {
+        margin-top: 5px;
+    }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 3px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+    .name {
+        font-weight: normal;
+    }
+
+    .quantity {
+        font-weight: bold;
+    }
+</style>

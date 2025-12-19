@@ -1,0 +1,290 @@
+﻿@model IEnumerable<Models.EF.User>
+@{
+    ViewBag.Title = "Tin nhắn khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="chat-title" style="text-align:center;color:red">TIN NHẮN KHÁCH HÀNG</h3>
+<input type="text" id="search-user" placeholder="Tìm kiếm theo tên hoặc username..."
+       style="width:95%; margin:10px; padding:5px; border-radius:5px; border:1px solid #ccc;" />
+<div class="chat-container">
+    <!-- Sidebar: Danh sách khách hàng -->
+    <div class="chat-sidebar">
+        @Html.Partial("UserList")
+    </div>
+
+
+    <!-- Chat box -->
+    <div class="chat-content">
+        <div class="chat-header">
+            <span id="chat-username">Chọn người để bắt đầu</span>
+            <button id="theme-toggle" title="Đổi giao diện">🌓</button>
+        </div>
+        <div id="chat-box">
+            @Html.Partial("Conversation", new List<Models.EF.ChatMessage>())
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." disabled />
+            <button id="send-btn" disabled>Gửi</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Biến màu */
+    :root {
+        --sidebar-bg: #f8f9fa;
+        --chat-bg: #fff;
+        --border: #ddd;
+        --hover: #f1f1f1;
+        --header-bg: #007bff;
+        --text: #222;
+        --subtext: #666;
+        --input-bg: #f8f9fa;
+        --input-field: #fff;
+    }
+
+    body.dark {
+        --sidebar-bg: #1e1e2f;
+        --chat-bg: #2c2c3a;
+        --border: #444;
+        --hover: #33334d;
+        --header-bg: #3a3ab0;
+        --text: #eee;
+        --subtext: #aaa;
+        --input-bg: #2c2c3a;
+        --input-field: #1e1e2f;
+    }
+
+    /* Container chính */
+    .chat-container {
+        display: flex;
+        height: 80vh;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    }
+
+    /* Sidebar */
+    .chat-sidebar {
+        width: 30%;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        overflow-y: auto;
+    }
+
+    /* Danh sách user */
+    .user-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .user-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+        border-bottom: 1px solid var(--border); /* gạch ngang phân tách */
+    }
+
+        /* Hover */
+        .user-item:hover {
+            background: var(--hover);
+        }
+
+        /* User đang chat */
+        .user-item.active {
+            background: #d0e6ff; /* nền đậm nổi bật */
+            border-left: 4px solid #007bff; /* optional: viền bên trái */
+        }
+
+        /* Avatar */
+        .user-item img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+    /* Thông tin user */
+    .user-info {
+        flex: 1;
+    }
+
+        .user-info .name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .user-info .last-message {
+            font-size: 13px;
+            color: var(--subtext);
+            white-space: nowrap; /* không xuống dòng */
+            overflow: hidden; /* ẩn phần thừa */
+            text-overflow: ellipsis; /* hiển thị ... */
+            max-width: 180px; /* giới hạn chiều rộng */
+            max-height: 40px;
+            display: block;
+        }
+
+    /* Nội dung chat */
+    .chat-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--chat-bg);
+    }
+
+    /* Header chat */
+    .chat-header {
+        padding: 14px 18px;
+        background:#444;
+        color: #fff;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #theme-toggle {
+        background: transparent;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    /* Box tin nhắn */
+    #chat-box {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Input và nút gửi */
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid var(--border);
+        background: var(--input-bg);
+    }
+
+        .chat-input input {
+            flex: 1;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            background: var(--input-field);
+            color: var(--text);
+            outline: none;
+        }
+
+        .chat-input button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+</style>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    $(function () {
+        let currentUserId = null;
+        const chatBox = $('#chat-box');
+        const sidebar = $('.chat-sidebar');
+
+        // Search user
+        $('#search-user').on('input', function () {
+            updateUserList();
+        });
+
+        // Load messages chat box
+        function loadMessages() {
+            if (!currentUserId) return;
+            chatBox.load(`/Admin/Chat/Conversation?userId=${currentUserId}`, () => {
+                chatBox.scrollTop(chatBox[0].scrollHeight);
+            });
+        }
+
+        // Render sidebar user list, sắp xếp theo tin nhắn mới nhất
+        function renderUserList(data) {
+            data.sort((a, b) => new Date(b.LastMessageTime) - new Date(a.LastMessageTime));
+            let html = '<ul class="user-list">';
+            data.forEach(u => {
+                html += `<li class="user-item ${currentUserId === u.UserId ? 'active' : ''}" data-userid="${u.UserId}" data-username="${u.Username}">
+                <img src="/Content/images/default-avatar.jpg" alt="Avatar" />
+                <div class="user-info">
+                    <div class="name">${u.Name} (${u.Username})</div>
+                    <div class="last-message"> ${u.LastMessage ? (u.IsFromAdmin ? 'Bạn' : 'Khách') + ': ' + u.LastMessage
+                        : 'Chưa có tin nhắn'}</div>
+                </div>
+            </li>`;
+            });
+            html += '</ul>';
+            $('.chat-sidebar').html(html);
+        }
+
+        function updateUserList() {
+            const search = $('#search-user').val().trim();
+            $.get('/Admin/Chat/GetLastMessageAll', { search }, data => {
+                renderUserList(data);
+            });
+        }
+
+        // Click user: load conversation
+        sidebar.on('click', '.user-item', function () {
+            currentUserId = $(this).data('userid');
+            $('#chat-username').text('Trò chuyện với ' + $(this).data('username'));
+            $('#chat-input,#send-btn').prop('disabled', false);
+            loadMessages();
+        });
+
+        function sendMessage() {
+            const text = $('#chat-input').val().trim();
+            if (!text || !currentUserId) return;
+
+            $('#send-btn').prop('disabled', true);
+
+            $.post('/Admin/Chat/SendMessage', { userId: currentUserId, messageText: text }, res => {
+                if (res.success) {
+                    $('#chat-input').val('');
+                    $('#chat-box').append(`<div class="message admin-message"><strong>Bạn:</strong> ${res.message.MessageText}</div>`);
+                    $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+
+                    // Update sidebar ngay để tin nhắn mới lên đầu
+                    updateUserList();
+                } else {
+                    alert("Gửi thất bại: " + (res.error || ""));
+                }
+                $('#send-btn').prop('disabled', false);
+            });
+        }
+
+        $('#send-btn').click(sendMessage);
+        $('#chat-input').keypress(e => { if (e.which === 13) { e.preventDefault(); sendMessage(); } });
+
+        // Toggle theme
+        $('#theme-toggle').click(() => $('body').toggleClass('dark'));
+
+        // Load lần đầu
+        updateUserList();
+        setInterval(() => {
+            loadMessages();
+            updateUserList();
+        }, 1000); // 1 giây là đủ
+    });
+
+
+</script>

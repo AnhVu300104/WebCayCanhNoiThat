@@ -1,0 +1,105 @@
+﻿@model Models.EF.Order
+
+@{
+    ViewBag.Title = "Thêm đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    h2 {
+        text-align: center;
+        font-weight: 700;
+        color: #0d6efd;
+        margin-bottom: 30px;
+    }
+
+    .order-card {
+        max-width: 900px;
+        margin: auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.1);
+        padding: 30px;
+    }
+</style>
+
+<h2>Thêm đơn hàng mới</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="order-card">
+        <h5 class="mb-3 text-primary fw-bold">Thông tin đơn hàng</h5>
+        <hr />
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group row mb-3">
+            @Html.LabelFor(model => model.ShipName, "Tên người nhận", new { @class = "col-md-3 col-form-label fw-semibold" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.ShipName, new { htmlAttributes = new { @class = "form-control", @required = "" } })
+                @Html.ValidationMessageFor(model => model.ShipName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row mb-3">
+            @Html.LabelFor(model => model.UserId, "Mã người dùng", new { @class = "col-md-3 col-form-label fw-semibold" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.UserId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row mb-3">
+            @Html.LabelFor(model => model.ShipPhone, "Số điện thoại", new { @class = "col-md-3 col-form-label fw-semibold" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.ShipPhone, new { htmlAttributes = new { @class = "form-control", @required = "" } })
+                @Html.ValidationMessageFor(model => model.ShipPhone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row mb-3">
+            @Html.LabelFor(model => model.ShipEmail, "Email", new { @class = "col-md-3 col-form-label fw-semibold" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.ShipEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ShipEmail, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row mb-3">
+            @Html.LabelFor(model => model.UpdateDate, "Ngày tạo đơn", new { @class = "col-md-3 col-form-label fw-semibold" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.UpdateDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.UpdateDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row mb-3">
+            @Html.LabelFor(model => model.ShipAddress, "Địa chỉ giao hàng", new { @class = "col-md-3 col-form-label fw-semibold" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.ShipAddress, new { htmlAttributes = new { @class = "form-control", @required = "" } })
+                @Html.ValidationMessageFor(model => model.ShipAddress, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group row mb-4">
+            @Html.LabelFor(model => model.StatusId, "Trạng thái đơn hàng", new { @class = "col-md-3 col-form-label fw-semibold" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.StatusId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StatusId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- Nút hành động -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success px-4 me-2">
+                Lưu đơn hàng
+            </button>
+
+            <a href="/Admin/Orders" class="btn btn-outline-secondary px-4">
+                Hủy / Trở về
+            </a>
+        </div>
+    </div>
+}

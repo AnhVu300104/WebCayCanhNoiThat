@@ -1,0 +1,81 @@
+﻿@model List<Models.EF.Category>
+
+@if (Model != null)
+{
+    <ul class="mnboxl">
+        @* Lấy danh mục cha (ParId là 0 hoặc null) *@
+        @foreach (var item in Model.Where(n => n.ParId == 0 || n.ParId == null))
+        {
+            var children = Model.Where(n => n.ParId == item.CategoryId).ToList();
+            var hasChild = children.Count > 0;
+
+            <li>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <a href="/Admin/Product/Show?CateId=@item.CategoryId"
+                       class="@(hasChild ? "fw-bold" : "")"
+                       style="flex:1;">
+                        @item.Name
+                    </a>
+
+                    @if (hasChild)
+                    {
+                        <i class="fa fa-angle-double-down toggle-menu"
+                           aria-hidden="true"
+                           style="cursor:pointer; padding: 5px 10px;"></i>
+                    }
+                </div>
+
+                @if (hasChild)
+                {
+                    <ul class="mnboxl_1" style="display:none; padding-left: 20px; border-left: 1px solid #ddd; margin-top: 5px;">
+                        @foreach (var child in children)
+                        {
+                            <li style="border-bottom:none; padding: 3px 0;">
+                                <a href="/Admin/Product/Show?CateId=@child.CategoryId" style="font-size: 14px;">
+                                    <i class="fa fa-caret-right"></i> @child.Name
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    </ul>
+
+    <script>
+        $(document).ready(function () {
+            // Sự kiện click vào icon mũi tên để đóng mở menu
+            $('.toggle-menu').click(function () {
+                // Tìm thẻ ul.mnboxl_1 ngay sau phần tử cha của icon này và toggle nó
+                $(this).parent().next('ul.mnboxl_1').slideToggle();
+
+                // Đổi icon
+                $(this).toggleClass('fa-angle-double-down fa-angle-double-up');
+            });
+        });
+    </script>
+
+    <style>
+        ul.mnboxl {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            ul.mnboxl > li {
+                padding: 8px 0;
+                border-bottom: 1px dashed #e3e6f0;
+            }
+
+            ul.mnboxl a {
+                text-decoration: none;
+                color: #5a5c69;
+                transition: 0.2s;
+            }
+
+                ul.mnboxl a:hover {
+                    color: #4e73df;
+                    padding-left: 5px;
+                }
+    </style>
+}

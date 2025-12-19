@@ -1,0 +1,82 @@
+﻿@model Models.EF.Warehouse
+
+@{
+    ViewBag.Title = "Thêm kho mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var warehouseTypes = new SelectList(new List<SelectListItem>
+{
+        new SelectListItem { Text = "Kho Tổng (Main)", Value = "Main" },
+        new SelectListItem { Text = "Kho Cửa hàng (Store)", Value = "Store" },
+        new SelectListItem { Text = "Kho Phụ (Sub)", Value = "Sub" }
+    }, "Value", "Text");
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Thêm Kho Hàng Mới</h1>
+
+    <div class="card shadow">
+        <div class="card-body">
+            @using (Html.BeginForm("Create", "Warehouse", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label>Mã kho *</label>
+                        @Html.TextBoxFor(m => m.Code, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Code)
+                    </div>
+                    <div class="col-md-6">
+                        <label>Tên kho *</label>
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Name)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label>Người quản lý</label>
+                        @Html.TextBoxFor(m => m.ManagerName, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-6">
+                        <label>Điện thoại</label>
+                        @Html.TextBoxFor(m => m.ManagerPhone, new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label>Loại kho</label>
+                        @Html.DropDownListFor(m => m.Type, warehouseTypes, "-- Chọn loại kho --",
+                            new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check mt-4">
+                            @* Input ẩn để gửi giá trị khi submit *@
+                            @Html.HiddenFor(m => m.IsActive)
+
+                            @* Checkbox hiển thị nhưng disabled, luôn tick *@
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   id="IsActive"
+                                   checked="checked"
+                                   disabled />
+                            <label class="form-check-label" for="IsActive">Kích hoạt</label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-secondary ml-2" })
+            }
+        </div>
+    </div>
+</div>

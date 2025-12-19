@@ -1,0 +1,441 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Trang quản trị - Web Cây Cảnh Nội Thất Anh Vũ</title>
+
+    <link href="~/Content/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <link href="~/Content/admin/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="~/Content/admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/Content/admin/css/admin-global.css" rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           PLANT THEME – XANH CÂY CẢNH SANG TRỌNG
+           ========================================================= */
+        :root {
+            --green-dark: #1B5E20;
+            --green-main: #2E7D32;
+            --green-light: #66BB6A;
+            --green-soft: #C8E6C9;
+            --green-border: #DCEFE3;
+            --bg-light: #F1F8F4;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: #333;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: linear-gradient(180deg, #2E7D32 10%, #1B5E20 100%) !important;
+        }
+
+            .sidebar .nav-item .nav-link {
+                color: #E8F5E9 !important;
+                font-weight: 500;
+            }
+
+                .sidebar .nav-item .nav-link:hover, .sidebar .nav-item.active .nav-link {
+                    background-color: rgba(255,255,255,0.15);
+                    color: #ffffff !important;
+                    font-weight: 700;
+                }
+
+            .sidebar .sidebar-brand {
+                background-color: rgba(0,0,0,0.1);
+            }
+
+        .sidebar-divider {
+            border-top: 1px solid rgba(255,255,255,0.2) !important;
+        }
+
+        /* COLLAPSE MENU */
+        .collapse-inner {
+            background-color: #fff !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .collapse-item {
+            color: var(--green-dark) !important;
+            font-weight: 500;
+        }
+
+            .collapse-item:hover, .collapse-item.active {
+                background-color: var(--green-soft) !important;
+                color: var(--green-dark) !important;
+                font-weight: 700;
+            }
+
+        /* TOPBAR */
+        .topbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--green-border);
+        }
+
+            .topbar .nav-link {
+                color: var(--green-dark);
+            }
+
+        /* BUTTONS */
+        .btn-primary {
+            background-color: var(--green-main);
+            border-color: var(--green-main);
+        }
+
+            .btn-primary:hover {
+                background-color: var(--green-dark);
+                border-color: var(--green-dark);
+            }
+
+        .btn-success {
+            background-color: var(--green-light);
+            border-color: var(--green-light);
+        }
+
+            .btn-success:hover {
+                background-color: #43A047;
+                border-color: #43A047;
+            }
+
+        /* CARDS */
+        .card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #e3e6f0;
+            color: var(--green-main);
+            font-weight: 700;
+        }
+
+        /* SCROLL TOP */
+        .scroll-to-top {
+            background-color: var(--green-main);
+        }
+
+            .scroll-to-top:hover {
+                background-color: var(--green-dark);
+            }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <div id="wrapper">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/Admin/Home/Index">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">QUẢN TRỊ</div>
+            </a>
+
+            <hr class="sidebar-divider my-0">
+
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/Home/Index">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Tổng quan</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            <div class="sidebar-heading">
+                BÁN HÀNG
+            </div>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                   aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-box-open"></i>
+                    <span>Quản lý Sản phẩm</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Quản lý chính:</h6>
+                        <a class="collapse-item" href="/Admin/Product/Show">Danh sách sản phẩm</a>
+                        <a class="collapse-item" href="/Admin/ProductCate/Show">Danh mục sản phẩm</a>
+
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Cấu hình Biến thể:</h6>
+                        <a class="collapse-item" href="/Admin/Attribute/Index">Thuộc tính (Màu/Size)</a>
+                    </div>
+                </div>
+            </li>
+            <hr class="sidebar-divider">
+
+            <div class="sidebar-heading">
+                Quản lý Kho hàng
+            </div>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseWarehouse"
+                   aria-expanded="true" aria-controls="collapseWarehouse">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Quản lý Kho hàng</span>
+                </a>
+                <div id="collapseWarehouse" class="collapse" aria-labelledby="headingWarehouse" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Kho Hàng:</h6>
+                        <a class="collapse-item" href="/Admin/Warehouse/Index">Danh sách Kho</a>
+                        
+
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Quản lý phiếu :</h6>
+                        <a class="collapse-item" href="/Admin/StockIn/Index">Quản lý Phiếu Nhập</a>
+                        <a class="collapse-item" href="/Admin/StockOut/Index">Quản lý Phiếu Xuất</a>
+                        <a class="collapse-item" href="/Admin/StockCheck/Index">Quản lý Kiểm kê</a>
+                        
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/Provider/Show">
+                    <i class="fas fa-fw fa-truck"></i>
+                    <span>Nhà cung cấp</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/Orders/Show">
+                    <i class="fas fa-fw fa-shopping-cart"></i>
+                    <span>Đơn đặt hàng</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/Order/Viewmodel">
+                    <i class="fas fa-fw fa-chart-line"></i>
+                    <span>Thống kê - Báo cáo</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider">
+
+            <div class="sidebar-heading">
+                Nội Dung
+            </div>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/Newss/Show">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Quản lý Tin tức</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider">
+
+            <div class="sidebar-heading">
+                NGƯỜI DÙNG
+            </div>
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/Customer/Show">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Khách hàng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/Chat/Index">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat với khách hàng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Admin/User/Show">
+                    <i class="fas fa-fw fa-user-tie"></i>
+                    <span>Nhân viên</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                   aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-user-shield"></i>
+                    <span>Phân quyền</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="/Admin/UserGroups/Index">Nhóm người dùng</a>
+                        <a class="collapse-item" href="/Admin/Roles/Index">Chức năng</a>
+                        <a class="collapse-item" href="/Admin/Credentials/Index">Quyền</a>
+                    </div>
+                </div>
+            </li>
+
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <div id="content">
+
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <ul class="navbar-nav ml-auto">
+
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <span class="badge badge-danger badge-counter">3+</span>
+                            </a>
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">Trung tâm Thông báo</h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">Hôm nay</div>
+                                        <span class="font-weight-bold">Có đơn hàng mới cần duyệt!</span>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Xem tất cả thông báo</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-envelope fa-fw"></i>
+                                <span class="badge badge-danger badge-counter">7</span>
+                            </a>
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
+                                <h6 class="dropdown-header">Tin nhắn mới</h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="https://source.unsplash.com/fn_BT9fwg_E/60x60" alt="">
+                                        <div class="status-indicator bg-success"></div>
+                                    </div>
+                                    <div class="font-weight-bold">
+                                        <div class="text-truncate">Xin chào! Shop có mẫu bàn này không?</div>
+                                        <div class="small text-gray-500">Nguyễn Văn A · 58 phút trước</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="/Admin/Chat/Index">Xem thêm tin nhắn</a>
+                            </div>
+                        </li>
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600">@ViewBag.username</span>
+                                <i class="fas fa-user-circle fa-2x text-gray-400"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="~/Admin/User/UserProfile">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Thông tin cá nhân
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Cài đặt
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Đăng xuất
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </div>
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                   
+                </div>
+            </footer>
+
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Xác nhận đăng xuất?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Chọn "Đăng xuất" bên dưới nếu bạn đã sẵn sàng kết thúc phiên làm việc.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                    <a class="btn btn-danger" href="~/Admin/Login/Logout">Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Content/admin/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Content/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/Content/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <script src="~/Content/admin/js/sb-admin-2.min.js"></script>
+
+    <script src="~/Content/admin/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/Content/admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Content/admin/js/demo/datatables-demo.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var currentUrl = window.location.pathname;
+
+            // Tìm link nào trùng với URL hiện tại thì active nó và mở menu cha
+            $('.collapse-item').each(function () {
+                var href = $(this).attr('href');
+                if (currentUrl.indexOf(href) !== -1) {
+                    $(this).addClass('active');
+                    $(this).closest('.collapse').addClass('show');
+                    $(this).closest('.nav-item').addClass('active');
+                }
+            });
+
+            // Active cho menu cấp 1 (không có con)
+            $('.nav-item .nav-link').each(function () {
+                var href = $(this).attr('href');
+                if (href && currentUrl.indexOf(href) !== -1 && !$(this).hasClass('collapsed')) {
+                    $(this).closest('.nav-item').addClass('active');
+                }
+            });
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

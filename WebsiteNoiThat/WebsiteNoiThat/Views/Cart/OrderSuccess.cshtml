@@ -1,0 +1,352 @@
+﻿@model WebsiteNoiThat.Models.OrderSuccessViewModel
+
+@{
+    ViewBag.Title = "Đặt hàng thành công";
+}
+
+<style>
+    .success-container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 0 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .success-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .success-header {
+        background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+    }
+
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 40px;
+        animation: scaleIn 0.5s ease;
+    }
+
+    @@keyframes scaleIn {
+        from {
+            transform: scale(0);
+        }
+
+        to {
+            transform: scale(1);
+        }
+    }
+
+    .success-header h2 {
+        margin: 0 0 10px 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .success-header p {
+        margin: 0;
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    .order-info {
+        padding: 30px;
+        border-bottom: 2px dashed #e9ecef;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        font-size: 1rem;
+    }
+
+    .info-label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .info-value {
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    .order-details {
+        padding: 30px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #8B4513;
+    }
+
+    .product-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 12px;
+    }
+
+    .product-info {
+        flex: 1;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 5px;
+    }
+
+    .product-variant {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .product-quantity {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 3px;
+    }
+
+    .product-price {
+        text-align: right;
+        margin-left: 15px;
+    }
+
+    .product-unit-price {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .product-total-price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #8B4513;
+    }
+
+    .order-total {
+        background: linear-gradient(135deg, #fdf8f3 0%, #f5ebe0 100%);
+        padding: 20px 30px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .total-label {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    .total-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #8B4513;
+    }
+
+    .action-buttons {
+        padding: 30px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .btn {
+        padding: 14px 25px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: inline-block;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 69, 19, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: #8B4513;
+        border: 2px solid #8B4513;
+    }
+
+        .btn-secondary:hover {
+            background: #8B4513;
+            color: white;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .note-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+        .note-box p {
+            margin: 0;
+            color: #856404;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+    .empty-message {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+    }
+
+    @@media (max-width: 768px) {
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+
+        .info-row {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+
+<div class="success-container">
+    <div class="success-card">
+        <!-- Header thành công -->
+        <div class="success-header">
+            <div class="success-icon">
+                ✓
+            </div>
+            <h2>Đặt hàng thành công!</h2>
+            <p>Cảm ơn bạn đã đặt hàng tại cửa hàng chúng tôi</p>
+        </div>
+
+        <!-- Thông tin đơn hàng -->
+        @if (Model?.Order != null)
+        {
+            <div class="order-info">
+                <div class="info-row">
+                    <span class="info-label">📋 Mã đơn hàng:</span>
+                    <span class="info-value">#@Model.Order.OrderId</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📅 Ngày đặt:</span>
+                    <span class="info-value">@Model.Order.CreatedDate</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">👤 Người nhận:</span>
+                    <span class="info-value">@Model.Order.ShipName</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📞 Số điện thoại:</span>
+                    <span class="info-value">@Model.Order.ShipPhone</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📧 Email:</span>
+                    <span class="info-value">@Model.Order.ShipEmail</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📍 Địa chỉ giao hàng:</span>
+                    <span class="info-value">@Model.Order.ShipAddress</span>
+                </div>
+            </div>
+        }
+
+        <!-- Chi tiết sản phẩm -->
+        <div class="order-details">
+            <h3 class="section-title">📦 Chi tiết đơn hàng</h3>
+
+            @if (Model?.OrderDetails != null && Model.OrderDetails.Count > 0)
+            {
+                foreach (var item in Model.OrderDetails)
+                {
+                    <div class="product-item">
+                        <div class="product-info">
+                            <div class="product-name">@item.ProductName</div>
+                            @if (!string.IsNullOrEmpty(item.VariantInfo) && item.VariantInfo != "Mặc định")
+                            {
+                                <div class="product-variant">🏷️ @item.VariantInfo</div>
+                            }
+                            <div class="product-quantity">Số lượng: <strong>@item.Quantity</strong></div>
+                        </div>
+                        <div class="product-price">
+                            <div class="product-unit-price">@string.Format("{0:N0}", item.Price)₫</div>
+                            <div class="product-total-price">@string.Format("{0:N0}", item.Total)₫</div>
+                        </div>
+                    </div>
+                }
+
+                <div class="order-total">
+                    <div class="total-row">
+                        <span class="total-label">💰 Tổng thanh toán:</span>
+                        <span class="total-value">@string.Format("{0:N0}", Model.Total)₫</span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="empty-message">
+                    <p>Không tìm thấy chi tiết đơn hàng</p>
+                </div>
+            }
+
+            @if (Model?.Order != null)
+            {
+                <div class="note-box">
+                    <p>
+                        <strong>📌 Lưu ý:</strong> Chúng tôi đã gửi email xác nhận đơn hàng đến <strong>@Model.Order.ShipEmail</strong>.
+                        Đơn hàng của bạn sẽ được xử lý trong vòng 24h. Vui lòng kiểm tra email và giữ liên lạc qua số điện thoại để nhận hàng.
+                    </p>
+                </div>
+            }
+        </div>
+
+        <!-- Buttons -->
+        <div class="action-buttons">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                🏠 Về trang chủ
+            </a>
+            <a href="@Url.Action("HistoryCart", "Cart")" class="btn btn-primary">
+                📋 Xem đơn hàng của tôi
+            </a>
+        </div>
+    </div>
+</div>

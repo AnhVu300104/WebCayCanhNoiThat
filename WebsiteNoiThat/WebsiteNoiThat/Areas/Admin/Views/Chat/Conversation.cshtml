@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Models.EF.ChatMessage>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var msg in Model)
+    {
+        if (msg.IsFromAdmin)
+        {
+            <div style="text-align:right; margin-bottom:10px;">
+                <span style="background:#007bff;color:white;padding:6px 10px;border-radius:12px;display:inline-block;max-width:400px">
+                    <div style="text-align:left"><b>Admin:</b> @Html.Raw(msg.MessageText)</div>
+                </span><br />
+                <small style="color:gray;">@msg.SentAt.ToString("HH:mm")</small>
+            </div>
+        }
+        else
+        {
+            <div style="text-align:left; margin-bottom:10px;">
+                <span style="background:#6c757d;color:white;padding:6px 10px;border-radius:12px;display:inline-block;max-width:400px">
+                    <div style="text-align:left"><b>Khách:</b> @Html.Raw(msg.MessageText)</div>
+                </span><br />
+                <small style="color:gray;">@msg.SentAt.ToString("HH:mm")</small>
+            </div>
+        }
+    }
+}
+else
+{
+    <p style="text-align:center;color:gray;">Chưa có tin nhắn nào.</p>
+}

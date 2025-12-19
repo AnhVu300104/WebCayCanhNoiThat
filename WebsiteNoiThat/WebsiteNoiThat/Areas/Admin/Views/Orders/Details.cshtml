@@ -1,0 +1,156 @@
+﻿@model Models.EF.Order
+@using WebsiteNoiThat.Areas.Admin.Models
+
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    // Ép kiểu an toàn (Safe Casting) cho dữ liệu từ ViewBag
+    var orderProducts = ViewBag.orderproducts as List<OrderProduct> ?? new List<OrderProduct>();
+    decimal totalPrice = (ViewBag.total is decimal) ? (decimal)ViewBag.total :
+                         (ViewBag.total is double) ? Convert.ToDecimal(ViewBag.total) : 0;
+    // Giả sử ViewBag.aaaa đã được thay bằng ViewBag.StatusName hoặc giữ nguyên
+    string statusName = ViewBag.StatusName ?? ViewBag.aaaa ?? "Không xác định";
+}
+
+<style>
+    h2 {
+        text-align: center;
+        font-weight: 700;
+        color: #0d6efd;
+        margin-bottom: 30px;
+    }
+
+    .order-card {
+        max-width: 1000px;
+        margin: auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.1);
+        padding: 30px;
+    }
+
+    .order-info dt {
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .order-info dd {
+        margin-bottom: 15px;
+    }
+
+    .total-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #dc3545; /* Đổi crimson thành màu đỏ Bootstrap */
+        text-align: right;
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+    }
+</style>
+
+<h2>Chi tiết đơn hàng <span class="text-dark">#@Model.OrderId</span></h2>
+
+<div class="order-card">
+
+    <h5 class="mb-3 text-primary fw-bold">Thông tin đơn hàng</h5>
+    <dl class="row order-info">
+        <dt class="col-md-3">Mã đơn hàng</dt>
+        <dd class="col-md-9">@Model.OrderId</dd>
+
+        <dt class="col-md-3">Tên người nhận</dt>
+        <dd class="col-md-9">@Model.ShipName</dd>
+
+        <dt class="col-md-3">Số điện thoại</dt>
+        <dd class="col-md-9">@Model.ShipPhone</dd>
+
+        <dt class="col-md-3">Email</dt>
+        <dd class="col-md-9">@Model.ShipEmail</dd>
+
+        <dt class="col-md-3">Địa chỉ giao hàng</dt>
+        <dd class="col-md-9">@Model.ShipAddress</dd>
+
+        <dt class="col-md-3">Ngày cập nhật</dt>
+        <dd class="col-md-9">@Model.UpdateDate</dd>
+
+        <dt class="col-md-3">Trạng thái đơn hàng</dt>
+        <dd class="col-md-9">
+            <span class="badge badge-info">@statusName</span>
+        </dd>
+    </dl>
+
+    <hr />
+
+    <h5 class="mb-3 text-primary fw-bold">Danh sách sản phẩm</h5>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th>Mã SP</th>
+                    <th class="text-left">Tên sản phẩm</th>
+                    <th width="150">Biến thể (Màu/Size)</th>
+                    <th width="100">Số lượng</th>
+                    <th width="150" class="text-right">Giá / đơn vị</th>
+                    <th width="150" class="text-right">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (orderProducts.Any())
+                {
+                    foreach (OrderProduct p in orderProducts)
+                    {
+                        decimal lineTotal = p.Quantity.GetValueOrDefault(0) * p.Price.GetValueOrDefault(0);
+
+                        <tr>
+                            <td>@p.ProductId</td>
+                            <td class="text-left">@p.ProductName</td>
+
+                            <td class="text-center">
+                                @if (!string.IsNullOrEmpty(p.VariantInfo))
+                                {
+                                    <span class="badge badge-secondary">@p.VariantInfo</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Không có</span>
+                                }
+                            </td>
+
+                            <td>@p.Quantity.GetValueOrDefault(0)</td>
+                            <td class="text-right">@p.Price.GetValueOrDefault(0).ToString("N0") ₫</td>
+                            <td class="text-right font-weight-bold">@lineTotal.ToString("N0") ₫</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Đơn hàng chưa có chi tiết sản phẩm.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="total-price">
+        Tổng tiền thanh toán: @totalPrice.ToString("N0") ₫
+    </div>
+
+    <hr />
+
+    <div class="text-center mt-4">
+        @Html.ActionLink(
+    "← Trở về danh sách",
+    "Show",
+    "Orders",
+    new { area = "Admin" },
+    new { @class = "btn btn-outline-secondary px-4" }
+)
+        <a href="@Url.Action("Edit", "Orders", new { id = Model.OrderId })" class="btn btn-warning px-4 ml-2">
+            <i class="fas fa-edit"></i> Cập nhật trạng thái
+        </a>
+    </div>
+
+</div>

@@ -1,0 +1,161 @@
+﻿/* ====== TITLE ====== */
+
+h2 {
+	text-align: center;
+	font-weight: 700;
+	color: #0d6efd;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin: 30px 0 25px;
+	position: relative;
+}
+
+	h2::after {
+		content: "";
+		width: 80px;
+		height: 4px;
+		background: linear-gradient(135deg, #0d6efd, #4dabf7);
+		display: block;
+		margin: 10px auto 0;
+		border-radius: 5px;
+	}
+
+
+/* ====== ADD BUTTON ====== */
+.btn-primary {
+	background: linear-gradient(135deg, #0d6efd, #4dabf7);
+	border: none;
+	border-radius: 30px;
+	padding: 8px 18px;
+	font-weight: 500;
+	box-shadow: 0 4px 10px rgba(13,110,253,.3);
+}
+
+	.btn-primary:hover {
+		background: linear-gradient(135deg, #0b5ed7, #339af0);
+		transform: translateY(-1px);
+	}
+
+/* ====== CARD ====== */
+.card {
+	border-radius: 15px;
+	border: none;
+}
+
+.card-body {
+	padding: 25px;
+}
+
+/* ====== DATATABLE SEARCH ====== */
+.dataTables_filter {
+	float: right;
+	margin-bottom: 10px;
+}
+
+	.dataTables_filter label {
+		font-weight: 600;
+		color: #495057;
+	}
+
+	.dataTables_filter input {
+		border-radius: 25px;
+		border: 1px solid #ced4da;
+		padding: 6px 16px;
+		margin-left: 8px;
+	}
+
+		.dataTables_filter input:focus {
+			border-color: #4dabf7;
+			box-shadow: 0 0 0 .2rem rgba(77,171,247,.25);
+		}
+
+/* ====== LENGTH SELECT ====== */
+.dataTables_length label {
+	font-weight: 500;
+}
+
+.dataTables_length select {
+	border-radius: 20px;
+	padding: 4px 12px;
+	border: 1px solid #ced4da;
+}
+
+/* ====== INFO TEXT ====== */
+.dataTables_info {
+	font-style: italic;
+	color: #6c757d;
+}
+
+/* ====== TABLE HEADER ====== */
+table.dataTable thead {
+	background: linear-gradient(135deg, #e7f1ff, #f8f9fa);
+}
+
+	table.dataTable thead th {
+		text-align: center;
+		vertical-align: middle;
+		font-weight: 700;
+		color: #0d6efd;
+	}
+
+/* ====== TABLE BODY ====== */
+table.dataTable tbody td {
+	text-align: center;
+	vertical-align: middle;
+	color: #495057;
+}
+
+/* ====== ROW HOVER ====== */
+table.dataTable tbody tr {
+	transition: all .2s ease;
+}
+
+	table.dataTable tbody tr:hover {
+		background-color: #f1f8ff;
+		transform: scale(1.01);
+	}
+
+/* ====== PAGINATION ====== */
+.dataTables_paginate {
+	margin-top: 15px;
+}
+
+	.dataTables_paginate .paginate_button {
+		border-radius: 25px !important;
+		border: none !important;
+		padding: 6px 14px !important;
+		margin: 0 3px;
+		background-color: #e7f1ff !important;
+		color: #0d6efd !important;
+		font-weight: 500;
+	}
+
+		.dataTables_paginate .paginate_button:hover {
+			background-color: #4dabf7 !important;
+			color: #fff !important;
+		}
+
+		.dataTables_paginate .paginate_button.current {
+			background: linear-gradient(135deg, #0d6efd, #4dabf7) !important;
+			color: #fff !important;
+		}
+
+/* ====== ACTION BUTTON ====== */
+table .btn-sm {
+	border-radius: 20px;
+	padding: 4px 14px;
+	font-weight: 500;
+}
+
+.btn-danger {
+	border-radius: 20px;
+	box-shadow: 0 3px 8px rgba(220,53,69,.3);
+}
+
+/* ====== SMOOTH ====== */
+button,
+input,
+select,
+table tr {
+	transition: all .25s ease;
+}

@@ -1,0 +1,219 @@
+﻿/* ==================== NÚT CHAT TRÒN ==================== */
+#chatbot-button {
+	position: fixed;
+	bottom: 25px;
+	right: 25px;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background: #0078ff;
+	color: white;
+	border: none;
+	cursor: pointer;
+	font-size: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+	transition: 0.3s ease;
+	z-index: 1000;
+}
+
+	#chatbot-button:hover {
+		transform: scale(1.1);
+		background: #0056cc;
+	}
+
+/* ==================== KHUNG CHAT ==================== */
+#chatbot-box {
+	display: none;
+	flex-direction: column;
+	position: fixed;
+	bottom: 100px;
+	right: 25px;
+	width: 380px;
+	height: 500px;
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+	overflow: hidden;
+	font-family: "Segoe UI", Arial, sans-serif;
+	z-index: 999;
+}
+
+/* ==================== HEADER ==================== */
+#chatbot-header {
+	background: linear-gradient(135deg, #0078ff, #005fcc);
+	color: #fff;
+	font-weight: 600;
+	font-size: 16px;
+	text-align: center;
+	padding: 14px;
+	letter-spacing: 0.3px;
+}
+
+/* ==================== KHU VỰC HIỂN THỊ TIN NHẮN ==================== */
+#chatbot-messages {
+	flex: 1;
+	padding: 16px;
+	background: #f0f2f5;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	overflow-y: auto;
+	scroll-behavior: smooth;
+}
+
+	/* Cuộn mượt */
+	#chatbot-messages::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	#chatbot-messages::-webkit-scrollbar-thumb {
+		background: rgba(0, 0, 0, 0.2);
+		border-radius: 3px;
+	}
+
+/* ==================== KHUNG GỬI TIN NHẮN ==================== */
+#chatbot-input-container {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	background: #fff;
+	border-top: 1px solid #ddd;
+}
+
+#chatbot-input {
+	flex: 1;
+	border: none;
+	outline: none;
+	border-radius: 20px;
+	background: #f0f2f5;
+	padding: 10px 15px;
+	font-size: 14px;
+}
+
+#chatbot-send {
+	background: #0078ff;
+	color: #fff;
+	border: none;
+	padding: 8px 16px;
+	margin-left: 8px;
+	border-radius: 20px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: 0.3s;
+}
+
+	#chatbot-send:hover {
+		background: #005fcc;
+	}
+
+/* ==================== BONG BÓNG TIN NHẮN ==================== */
+
+/* Container tổng cho từng tin nhắn */
+.chatbot-user,
+.chatbot-bot {
+	display: flex;
+	flex-direction: column;
+	max-width: 80%;
+}
+
+/* Bot (bên trái) */
+.chatbot-bot {
+	align-self: flex-start;
+}
+
+	.chatbot-bot .chatbot-bubble {
+		background: #e5e7eb;
+		color: #000;
+		border-radius: 16px 16px 16px 4px;
+		padding: 10px 14px;
+		font-size: 14px;
+		line-height: 1.4;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+		word-wrap: break-word;
+	}
+
+/* User (bên phải) */
+.chatbot-user {
+	align-self: flex-end;
+}
+
+	.chatbot-user .chatbot-bubble {
+		background: #0078ff;
+		color: #fff;
+		border-radius: 16px 16px 4px 16px;
+		padding: 10px 14px;
+		font-size: 14px;
+		line-height: 1.4;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+		word-wrap: break-word;
+	}
+
+/* Thời gian */
+.chatbot-time {
+	margin-top: 4px;
+	font-size: 11px;
+	color: #888;
+}
+
+/* Bot căn trái, user căn phải */
+.chatbot-bot .chatbot-time {
+	text-align: left;
+	padding-left: 6px;
+}
+
+.chatbot-user .chatbot-time {
+	text-align: right;
+	padding-right: 6px;
+}
+
+/* ==================== LỜI CHÀO ==================== */
+#chatbot-greeting {
+	position: fixed;
+	bottom: 95px;
+	right: 35px;
+	background: #0078ff;
+	color: #fff;
+	padding: 10px 14px;
+	border-radius: 12px;
+	font-size: 14px;
+	font-weight: 500;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+	max-width: 230px;
+	display: none;
+	animation: fadeInOut 5s ease forwards;
+}
+
+	#chatbot-greeting::after {
+		content: "";
+		position: absolute;
+		bottom: -8px;
+		right: 25px;
+		border-width: 8px;
+		border-style: solid;
+		border-color: #0078ff transparent transparent transparent;
+	}
+
+@keyframes fadeInOut {
+	0% {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+
+	15% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	80% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+}
+

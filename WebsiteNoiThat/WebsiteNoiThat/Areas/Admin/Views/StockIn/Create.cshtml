@@ -1,0 +1,341 @@
+﻿@model Models.EF.StockIn
+
+@{
+    ViewBag.Title = "Tạo phiếu nhập kho";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .search-result-box {
+        position: absolute;
+        z-index: 1000;
+        background: white;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 0 0 5px 5px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        display: none;
+    }
+
+    .search-item {
+        padding: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+        .search-item:hover {
+            background-color: #f8f9fc;
+        }
+
+        .search-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+
+        .search-item .info {
+            flex: 1;
+        }
+
+        .search-item .sku {
+            font-size: 0.85rem;
+            color: #888;
+            font-weight: bold;
+        }
+
+    .total-footer {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #e74a3b;
+        text-align: right;
+    }
+</style>
+
+@using (Html.BeginForm("Create", "StockIn", FormMethod.Post, new { id = "form-stock-in" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.StockInId)
+    @Html.HiddenFor(model => model.Code)
+    @Html.HiddenFor(model => model.TotalAmount)
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.CreatedBy)
+    @Html.HiddenFor(model => model.CreatedAt)
+    <input type="hidden" name="stockDetailsJson" id="stockDetailsJson" />
+
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Tạo Phiếu Nhập Kho</h1>
+            <a href="@Url.Action("Index", "StockIn")" class="btn btn-sm btn-secondary shadow-sm">
+                <i class="fas fa-arrow-left fa-sm"></i> Quay lại
+            </a>
+        </div>
+
+        <div class="row">
+            <!-- Thông tin phiếu -->
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Thông tin phiếu</h6>
+                    </div>
+                    <div class="card-body">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="form-group">
+                            <label class="control-label font-weight-bold">Kho nhập <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(model => model.WarehouseId, ViewBag.Warehouses as SelectList, "--- Chọn kho ---", new { @class = "form-control", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.WarehouseId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label font-weight-bold">Nhà cung cấp <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(model => model.ProviderId, ViewBag.Providers as SelectList, "--- Chọn nhà cung cấp ---", new { @class = "form-control", @required = "required" })
+                            @Html.ValidationMessageFor(model => model.ProviderId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label font-weight-bold">Loại nhập</label>
+                            @Html.DropDownListFor(model => model.Type, new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Nhập mua hàng", Value = "purchase", Selected = true },
+                                new SelectListItem { Text = "Nhập trả hàng", Value = "return" },
+                                new SelectListItem { Text = "Nhập chuyển kho", Value = "transfer" },
+                                new SelectListItem { Text = "Nhập khác", Value = "other" }
+                            }, new { @class = "form-control" })
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label font-weight-bold">Ghi chú</label>
+                            @Html.TextAreaFor(model => model.Note, new { @class = "form-control", rows = "4", placeholder = "Ghi chú nhập kho..." })
+                        </div>
+
+                        <hr />
+                        <div class="form-group">
+                            <button type="button" id="btn-submit" class="btn btn-success btn-block btn-lg">
+                                <i class="fas fa-save"></i> LƯU PHIẾU NHẬP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chi tiết sản phẩm -->
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-light">
+                        <h6 class="m-0 font-weight-bold text-primary">Chi tiết sản phẩm nhập</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3 bg-white p-3 border rounded">
+                            <div class="col-md-5 position-relative">
+                                <label class="small font-weight-bold">Tìm sản phẩm (Tên/SKU)</label>
+                                <input type="text" id="product-search" class="form-control" placeholder="Gõ để tìm kiếm..." autocomplete="off">
+                                <input type="hidden" id="selected-variant-id">
+                                <div id="search-results" class="search-result-box"></div>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="small font-weight-bold">Đơn giá nhập</label>
+                                <input type="number" id="input-price" class="form-control" min="0" value="0">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="small font-weight-bold">Số lượng</label>
+                                <input type="number" id="input-qty" class="form-control" min="1" value="1">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="button" id="btn-add-row" class="btn btn-primary btn-block">
+                                    <i class="fas fa-plus"></i> Thêm
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped" width="100%">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th width="5%">#</th>
+                                        <th width="10%">Ảnh</th>
+                                        <th width="35%">Sản phẩm / SKU</th>
+                                        <th width="15%" class="text-right">Đơn giá</th>
+                                        <th width="10%" class="text-center">SL</th>
+                                        <th width="15%" class="text-right">Thành tiền</th>
+                                        <th width="10%" class="text-center">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body">
+                                    <tr id="empty-row">
+                                        <td colspan="7" class="text-center text-muted">Chưa có sản phẩm nào trong phiếu.</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5" class="text-right font-weight-bold">TỔNG CỘNG:</td>
+                                        <td colspan="2" class="total-footer" id="grand-total">0₫</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        var productsData = @Html.Raw(ViewBag.ProductJson ?? "[]");
+        var stockDetails = @Html.Raw(ViewBag.OriginalStockDetailsJson ?? "[]");
+
+        $(document).ready(function() {
+
+            // --- TÌM KIẾM SẢN PHẨM ---
+            $('#product-search').on('input', function() {
+                var keyword = $(this).val().toLowerCase();
+                if(keyword.length < 1) {
+                    $('#search-results').hide();
+                    return;
+                }
+                var results = productsData.filter(p =>
+                    p.ProductName.toLowerCase().includes(keyword) ||
+                    p.SKU.toLowerCase().includes(keyword)
+                );
+                renderSearchResults(results);
+            });
+
+            // --- CHỌN SẢN PHẨM TỪ LIST GỢI Ý ---
+            $(document).on('click', '.search-item', function() {
+                var id = $(this).data('id');
+                var product = productsData.find(p => p.VariantId == id);
+                if(product) {
+                    $('#product-search').val(product.ProductName + ' (' + product.SKU + ')');
+                    $('#selected-variant-id').val(product.VariantId);
+                    $('#input-price').val(product.Price || 0);
+                    $('#search-results').hide();
+                    $('#input-qty').focus();
+                }
+            });
+
+            $(document).click(function(e) {
+                if (!$(e.target).closest('#product-search, #search-results').length) {
+                    $('#search-results').hide();
+                }
+            });
+
+            // --- THÊM DÒNG VÀO BẢNG ---
+            $('#btn-add-row').click(function() {
+                var variantId = $('#selected-variant-id').val();
+                var qty = parseInt($('#input-qty').val());
+                var price = parseFloat($('#input-price').val());
+
+                if(!variantId) { alert('Vui lòng chọn sản phẩm!'); return; }
+                if(qty <= 0) { alert('Số lượng phải lớn hơn 0!'); return; }
+
+                var existingItem = stockDetails.find(x => x.VariantId == variantId);
+                if(existingItem) {
+                    if(confirm('Sản phẩm này đã có trong danh sách. Cộng dồn số lượng?')) {
+                        existingItem.Quantity += qty;
+                        renderTable();
+                        resetInput();
+                    }
+                    return;
+                }
+
+                var productInfo = productsData.find(p => p.VariantId == variantId);
+
+                stockDetails.push({
+                    VariantId: parseInt(variantId),
+                    Quantity: qty,
+                    UnitPrice: price,
+                    Note: '',
+                    SKU: productInfo.SKU,
+                    ProductName: productInfo.ProductName,
+                    Image: productInfo.ImageVariant || 'no-image.png'
+                });
+
+                renderTable();
+                resetInput();
+            });
+
+            // --- XÓA DÒNG ---
+            $(document).on('click', '.btn-remove-row', function() {
+                var index = $(this).data('index');
+                stockDetails.splice(index, 1);
+                renderTable();
+            });
+
+            // --- SUBMIT FORM ---
+            $('#btn-submit').click(function() {
+                if(stockDetails.length === 0) { alert('Vui lòng thêm ít nhất một sản phẩm!'); return; }
+                $('#stockDetailsJson').val(JSON.stringify(stockDetails));
+                $('#form-stock-in').submit();
+            });
+
+            renderTable(); // render lại bảng nếu stockDetails đã có (POST lỗi)
+        });
+
+        function renderSearchResults(results) {
+            var html = '';
+            if(results.length > 0){
+                results.forEach(p => {
+                    html += `<div class="search-item" data-id="${p.VariantId}">
+                        <img src="/image/${p.ImageVariant || 'no-image.png'}" onerror="this.src='/Content/images/no-image.png'">
+                        <div class="info">
+                            <div class="font-weight-bold">${p.ProductName}</div>
+                            <div class="sku">SKU: ${p.SKU} | Giá: ${formatCurrency(p.Price)}</div>
+                        </div>
+                    </div>`;
+                });
+                $('#search-results').html(html).show();
+            } else {
+                $('#search-results').html('<div class="p-3 text-muted text-center">Không tìm thấy sản phẩm</div>').show();
+            }
+        }
+
+        function renderTable() {
+            var tbody = $('#table-body');
+            tbody.empty();
+            if(stockDetails.length === 0){
+                tbody.html('<tr id="empty-row"><td colspan="7" class="text-center text-muted">Chưa có sản phẩm nào.</td></tr>');
+                $('#grand-total').text('0₫');
+                return;
+            }
+
+            var totalAmount = 0;
+            stockDetails.forEach((item, index) => {
+                var lineTotal = item.Quantity * item.UnitPrice;
+                totalAmount += lineTotal;
+
+                tbody.append(`<tr>
+                    <td>${index+1}</td>
+                    <td><img src="/image/${item.Image}" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='/Content/images/no-image.png'"></td>
+                    <td><div class="font-weight-bold text-primary">${item.SKU}</div><div class="small">${item.ProductName}</div></td>
+                    <td class="text-right">${formatCurrency(item.UnitPrice)}</td>
+                    <td class="text-center"><span class="badge badge-secondary" style="font-size:1rem;">${item.Quantity}</span></td>
+                    <td class="text-right font-weight-bold">${formatCurrency(lineTotal)}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm btn-circle btn-remove-row" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`);
+            });
+            $('#grand-total').text(formatCurrency(totalAmount));
+        }
+
+        function resetInput() {
+            $('#product-search').val('').focus();
+            $('#selected-variant-id').val('');
+            $('#input-price').val(0);
+            $('#input-qty').val(1);
+        }
+
+        function formatCurrency(number) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+        }
+    </script>
+}

@@ -1,0 +1,163 @@
+﻿@using WebsiteNoiThat.Areas.Admin.Models
+@model IEnumerable<OrderView>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    h2 {
+        text-align: center;
+        font-weight: 700;
+        color: #0d6efd;
+        margin-bottom: 25px;
+    }
+
+    .btn-action {
+        min-width: 70px;
+        margin-right: 3px;
+    }
+
+    .modal-header {
+        background: #dc3545;
+        color: white;
+    }
+
+    .modal-footer .btn {
+        min-width: 100px;
+    }
+</style>
+
+<h2>Danh sách đơn đặt hàng</h2>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="example"
+                   class="table table-striped table-bordered table-hover text-center"
+                   style="width:100%">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Mã</th>
+                        <th>Người nhận</th>
+                        <th>Điện thoại</th>
+                        <th>Email</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Địa chỉ</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.OrderId</td>
+                            <td>@item.ShipName</td>
+                            <td>@item.ShipPhone</td>
+                            <td>@item.ShipEmail</td>
+                            <td>@item.UpdateDate</td>
+                            <td>@item.ShipAddress</td>
+                            <td>@item.StatusName</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary btn-action"
+                                   href="/Admin/Orders/Details/@item.OrderId">
+                                    Xem
+                                </a>
+
+                                <a class="btn btn-sm btn-warning btn-action"
+                                   href="/Admin/Orders/Edit/@item.OrderId">
+                                    Cập nhật
+                                </a>
+                                
+                                <!--if (item.StatusName == "Đã huỷ" || item.StatusName == "Đã hủy")
+                                {-->
+                                    <!-- CHỈ ĐƯỢC XÓA KHI ĐÃ HUỶ -->
+                                    <!--<button class="btn btn-sm btn-danger btn-action"
+                                            onclick="confirmDelete(@item.OrderId)">
+                                        Xóa
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-danger btn-action"
+                                            disabled
+                                            title="Chỉ được xóa khi đơn hàng đã huỷ">
+                                        Xóa
+                                    </button>
+                                }-->
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MODAL XÁC NHẬN XÓA ================= -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            @using (Html.BeginForm("Delete", "Orders", new { area = "Admin" }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="deleteId" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa đơn hàng</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <p>Bạn có chắc chắn muốn <strong>xóa đơn hàng này</strong> không?</p>
+                    <p class="text-danger">Hành động này không thể hoàn tác.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <!-- HỦY: chỉ đóng modal -->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Hủy
+                    </button>
+
+                    <!-- XÓA: submit POST -->
+                    <button type="submit" class="btn btn-danger">
+                        Xóa
+                    </button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Content/DataTable/js/jquery.dataTables.min.js"></script>
+<script src="~/Content/DataTable/js/dataTables.bootstrap.min.js"></script>
+
+<script>
+    function confirmDelete(id) {
+        $('#deleteId').val(id);
+        $('#deleteModal').modal('show');
+    }
+
+    $('#example').DataTable({
+        language: {
+            search: "Tìm kiếm:",
+            lengthMenu: "Hiển thị _MENU_ đơn hàng",
+            info: "Hiển thị _START_ đến _END_ của _TOTAL_ đơn hàng",
+            infoEmpty: "Không có dữ liệu",
+            zeroRecords: "Không tìm thấy đơn hàng phù hợp",
+            paginate: {
+                first: "Trang đầu",
+                last: "Trang cuối",
+                next: "Sau",
+                previous: "Trước"
+            }
+        }
+    });
+</script>

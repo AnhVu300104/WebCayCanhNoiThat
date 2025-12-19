@@ -1,0 +1,188 @@
+﻿@model Models.EF.ProductVariant
+
+@{
+    ViewBag.Title = "Chỉnh sửa biến thể";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var product = ViewBag.Product as Models.EF.Product;
+    var attributes = ViewBag.Attributes as List<Models.EF.Attribute>;
+    var selectedValues = ViewBag.SelectedValues as List<Models.EF.VariantAttributeValue>;
+    var warehouses = ViewBag.Warehouses as List<Models.EF.Warehouse>;
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Sửa biến thể: <span class="text-primary">@product.Name</span>
+        </h1>
+        <a href="@Url.Action("Index", "Variant", new { productId = product.ProductId })" class="btn btn-sm btn-secondary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationSummary(false, "Vui lòng kiểm tra lại thông tin:", new { @class = "mb-0" })
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Thông tin chi tiết</h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Edit", "Variant", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.VariantId)
+                @Html.HiddenFor(m => m.ProductId)
+                @Html.HiddenFor(m => m.ImageVariant)
+
+                <div class="row">
+                    <div class="col-md-6 border-right">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Mã SKU <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.SKU, new { @class = "form-control", @placeholder = "VD: SP01-RED-XL", @required = "required" })
+                            <small class="form-text text-muted">Mã duy nhất để quản lý kho.</small>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label class="font-weight-bold">Giá bán gốc</label>
+                                @Html.TextBoxFor(m => m.Price, new { @class = "form-control", @type = "number", @min = "0", @required = "required" })
+                            </div>
+                            <div class="col-md-6">
+                                <label class="font-weight-bold">Giá khuyến mãi</label>
+                                @Html.TextBoxFor(m => m.SalePrice, new { @class = "form-control", @type = "number", @min = "0" })
+                                <small class="text-muted">Để 0 nếu không giảm.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Số lượng tồn kho</label>
+                            <input type="number" class="form-control" value="@Model.StockQuantity" readonly />
+                            @Html.HiddenFor(m => m.StockQuantity)
+                            <small class="text-muted">
+                                <i class="fas fa-lock"></i>
+                                Số lượng tồn kho được quản lý tự động, không thể sửa trực tiếp.
+                            </small>
+                        </div>
+
+                        <!-- ===== THÊM MỚI: Chọn kho ===== -->
+                        <div class="form-group">
+                            <label class="font-weight-bold">
+                                <i class="fas fa-warehouse text-info"></i> Kho hàng
+                            </label>
+                            <select name="WarehouseId" class="form-control">
+                                <option value="">-- Chọn kho (Tùy chọn) --</option>
+                                @if (warehouses != null)
+                                {
+                                    foreach (var wh in warehouses)
+                                    {
+                                        <option value="@wh.WarehouseId" @(Model.WarehouseId == wh.WarehouseId ? "selected" : "")>
+                                            @wh.Code - @wh.Name 
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <small class="text-muted">
+                                Chọn kho lưu trữ biến thể này.
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Ảnh đại diện</label>
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="mr-3">
+                                    @if (!string.IsNullOrEmpty(Model.ImageVariant))
+                                    {
+                                        <img src="@Url.Content("~/image/" + Model.ImageVariant)" id="previewImg" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/Content/images/no-image.png" id="previewImg" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;" />
+                                    }
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" name="ImageFile" id="ImageFile" class="custom-file-input" onchange="previewFile(this);">
+                                    <label class="custom-file-label" for="ImageFile">Chọn ảnh mới...</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                @Html.CheckBox("IsActive", Model.IsActive.GetValueOrDefault(), new { @class = "custom-control-input", @id = "IsActive" })
+                                <label class="custom-control-label" for="IsActive">Đang hoạt động (Kích hoạt)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="font-weight-bold text-secondary mb-3">Phân loại sản phẩm</h6>
+
+                        @if (attributes != null && attributes.Any())
+                        {
+                            foreach (var attr in attributes)
+                            {
+                                var selectedValId = selectedValues.FirstOrDefault(x => x.AttributeId == attr.AttributeId)?.ValueId ?? 0;
+
+                                <div class="form-group">
+                                    <label>@attr.Name</label>
+                                    <input type="hidden" name="AttributeIds" value="@attr.AttributeId" />
+                                    <select name="ValueIds" class="form-control">
+                                        <option value="0">-- Chọn @attr.Name --</option>
+                                        @if (attr.AttributeValues != null)
+                                        {
+                                            foreach (var val in attr.AttributeValues)
+                                            {
+                                                <option value="@val.ValueId" @(selectedValId == val.ValueId ? "selected" : "")>
+                                                    @val.Value
+                                                </option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                Chưa có thuộc tính nào được cấu hình. Vui lòng vào <b>Quản lý thuộc tính</b> để thêm Màu, Size...
+                            </div>
+                        }
+
+                        <hr />
+                        <div class="alert alert-info small">
+                            <i class="fas fa-info-circle"></i>
+                            Chọn các thuộc tính phù hợp cho biến thể này. Ví dụ: Màu Đỏ, Size XL.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-save"></i> Lưu Thay Đổi
+                    </button>
+                    <a href="@Url.Action("Index", "Variant", new { productId = Model.ProductId })" class="btn btn-secondary btn-lg ml-2">Hủy</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewFile(input) {
+            var file = input.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    $("#previewImg").attr("src", reader.result);
+                }
+                reader.readAsDataURL(file);
+                $(input).next('.custom-file-label').html(file.name);
+            }
+        }
+    </script>
+}

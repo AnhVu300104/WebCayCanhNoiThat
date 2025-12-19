@@ -1,0 +1,738 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa Hàng Cây Cảnh Anh Vũ</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/css/nivo-slider.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.carousel.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.theme.css" rel="stylesheet" />
+    <link href="~/Content/css/Slider.css" rel="stylesheet" />
+    <link href="~/Content/css/style.css" rel="stylesheet" />
+
+    <link href="~/Scripts/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/chatbot.css?v=1")" />
+    <style>
+
+        :root {
+            --primary-color: #A0522D; /* Sà-lim (Saddle Brown) - Màu nội thất sang trọng */
+            --secondary-color: #e8d0b3; /* Màu be nhạt */
+            --text-dark: #333;
+            --text-light: #fff;
+            --font-primary: 'Playfair Display', serif;
+            --font-secondary: 'Quicksand', sans-serif;
+        }
+
+        /* 1. Body & Typography */
+        body {
+            font-family: var(--font-secondary);
+            color: var(--text-dark);
+            background-color: #f7f7f7;
+        }
+
+        /* 2. Topbar */
+        #header .topbar {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 5px 0;
+            font-size: 13px;
+            text-align: center;
+        }
+
+            #header .topbar a, #header .topbar b {
+                color: var(--text-light);
+                font-weight: 500;
+            }
+
+            #header .topbar p {
+                margin: 0;
+            }
+
+        /* 3. Main Header (Logo, Search, Cart) */
+        #header .header {
+            background-color: var(--text-light);
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Logo Text */
+        #logo a {
+            font-family: var(--font-primary);
+            color: var(--primary-color);
+            font-size: 36px !important;
+            font-weight: 700 !important;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        /* Search Bar */
+        #div_seach {
+            display: flex;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        #input_search {
+            border: none;
+            padding: 10px 15px;
+            height: auto;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        #btn_search {
+            background-color: transparent;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            outline: none;
+        }
+        /* Khi hover vào li.dropdown thì hiện dropdown-menu */
+        li.dropdown:hover > .dropdown-menu {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            transition: all 0.3s ease;
+        }
+
+        /* Ẩn mặc định */
+        .dropdown-menu {
+            display: none;
+            opacity: 0;
+            visibility: hidden;
+            margin-top: 0;
+        }
+
+        #search_icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+        }
+
+        /* Account & Cart */
+        #account_cart {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 100%;
+        }
+
+            #account_cart button {
+                background: none;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+        #btn_cart a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        #btn_cart img {
+            width: 24px;
+            height: 24px;
+            margin-right: 5px;
+        }
+
+        /* 4. Main Menu Navigation */
+        #mainmenu {
+            background-color: var(--primary-color);
+            /* 🛠️ SỬA ĐỔI: Thêm đổ bóng để menu nổi lên */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+            #mainmenu ul.x1 {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                /* 🛠️ FIX CĂN CHỈNH: Căn giữa theo chiều dọc */
+                align-items: center;
+            }
+
+                #mainmenu ul.x1 li {
+                    position: relative;
+                    /* 🛠️ FIX CĂN CHỈNH: Đảm bảo li cũng căn giữa */
+                    display: flex;
+                    align-items: center;
+                }
+
+                    /* Khoảng cách các mục menu chính */
+                    #mainmenu ul.x1 li a {
+                        color: var(--text-light);
+                        text-decoration: none;
+                        padding: -30px 15px; /* Điều chỉnh padding hợp lý */
+                        display: block;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        transition: background-color 0.3s;
+                    }
+
+                        #mainmenu ul.x1 li a:hover {
+                            background-color: rgba(255, 255, 255, 0.1);
+                            color: var(--secondary-color);
+                        }
+
+                    /* Nút "Danh Mục" */
+                    #mainmenu ul.x1 li .dropdown-toggle {
+                        padding: 15px 15px;
+                        border: none;
+                        background: none;
+                        line-height: normal;
+                        text-align: left;
+                        color: var(--text-light);
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        display: block;
+                        /* 🛠️ FIX CĂN CHỈNH: Đảm bảo nút này căn giữa trong khối li */
+                        vertical-align: middle;
+                    }
+
+                        /* Thêm hiệu ứng hover cho nút dropdown */
+                        #mainmenu ul.x1 li .dropdown-toggle:hover {
+                            background-color: rgba(255, 255, 255, 0.1);
+                            color: var(--secondary-color);
+                        }
+
+        /* CĂN CHỈNH VÀ MÀU SẮC CHO DROPDOWN */
+        .dropdown-menu {
+            border: none;
+            border-radius: 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            padding: 0;
+            /* FIX: Loại bỏ khoảng cách và căn ngay dưới menu item */
+            margin-top: 0 !important;
+            top: 100% !important;
+            left: 0 !important;
+            /* Màu nền be nhạt */
+            background-color: var(--secondary-color);
+            min-width: 180px;
+        }
+
+            .dropdown-menu .dropdown-item {
+                /* Khoảng cách các mục con đã được làm sát hơn */
+                padding: 6px 20px;
+                /* Màu chữ nâu chủ đạo */
+                color: var(--primary-color);
+                font-weight: 700;
+                display: block;
+            }
+
+                .dropdown-menu .dropdown-item:hover {
+                    /* Màu hover nâu đậm */
+                    background-color: var(--primary-color);
+                    color: black !important; /* Chữ đen khi hover trên nền nâu */
+                }
+
+        /* 5. Left Panel & Content */
+        #left .boxleft {
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            background-color: var(--text-light);
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Thêm đổ bóng nhẹ cho các khối trái */
+        }
+
+        #left .titboxl {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+            #left .titboxl i {
+                margin-right: 10px;
+            }
+
+        #left .ctboxleft {
+            padding: 15px;
+        }
+
+        #left .boxspl input[type="submit"] {
+            margin-top: 15px;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.3s;
+        }
+
+            #left .boxspl input[type="submit"]:hover {
+                background-color: #8B4513;
+                border-color: #8B4513;
+            }
+
+        /* 🛠️ SỬA ĐỔI: CSS cho Khối Tin Tức */
+        #left .boxleft:nth-child(3) .titboxl { /* Áp dụng cho khối Tin Tức cụ thể */
+            justify-content: center; /* Căn giữa tiêu đề "TIN TỨC" */
+        }
+
+        /* Đảm bảo nội dung Tin Tức hiển thị đúng (Giả định bên trong @Html.Action("NewsHot", "News")) */
+        #slider-tintuc .owl-item {
+            text-align: center; /* Căn giữa nội dung slide */
+        }
+        #slider-tintuc img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 0 auto 10px auto; /* Căn giữa ảnh */
+            display: block;
+        }
+        #slider-tintuc .post-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--primary-color);
+            line-height: 1.4;
+        }
+
+        /* 6. Footer (Giữ lại CSS cũ cho các class dùng chung, nhưng style chính đã là inline) */
+        #footer {
+            /* Các thuộc tính này bị override bởi inline style */
+            background-color: var(--text-dark);
+            color: #ccc;
+            padding: 40px 0;
+            margin-top: 30px;
+        }
+
+            #footer h3 span {
+                font-family: var(--font-primary);
+                /* color: var(--secondary-color); - Đã được chỉnh thành black trong inline style */
+                font-size: 18px;
+                font-weight: 700;
+                border-bottom: 2px solid var(--primary-color);
+                padding-bottom: 5px;
+                display: inline-block;
+                margin-bottom: 10px;
+            }
+
+            #footer .ct-boxft1 p, #footer .ct-boxft1 ul {
+                font-size: 14px;
+                margin-bottom: 10px;
+                padding: 0;
+                list-style: none;
+            }
+
+                #footer .ct-boxft1 ul li a {
+                    color: #ccc;
+                    text-decoration: none;
+                    line-height: 1.8;
+                    transition: color 0.3s;
+                }
+
+                    #footer .ct-boxft1 ul li a:hover {
+                        color: var(--primary-color);
+                    }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="~/Scripts/jquery-ui.js"></script>
+
+    <script src="~/Content/css/jquery.nivo.slider.pack.js" type="text/javascript"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <script src="~/Content/css/owl.carousel.js"></script>
+    @RenderSection("Styles", required: false)
+
+</head>
+<body>
+    <header id="header">
+        <div class="topbar">
+            <p>Hotline Mua Hàng: <a href="tel:0964 155 923">0964 155 923</a> | Hotline CSKH: <b>0964 155 923</b> | Email CSKH: <b>22T1020802@husc.edu.vn</b></p>
+        </div>
+
+        <div class="header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12 col-md-4">
+                        <form action="/tim-kiem" method="get">
+                            <div id="div_seach">
+                                <input id="input_search" type="text" class="form-control" id="txtKeyword" name="keyword" placeholder="Tìm kiếm sản phẩm..." />
+                                <button id="btn_search" type="submit">
+                                    <img id="search_icon" src="~/Content/client/assets/img/search.png" alt="Search" />
+                                </button>
+                                <script src="~/Scripts/basecontroller.js"></script>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-12 col-md-4 my-3 my-md-0">
+                        <div id="logo">
+                            @*<a href="/"><img src="~/image/logo.png" alt=""></a>*@
+                            <a href="/">CAYCANHANHVU.VN</a>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4" style="margin-top:30px;">
+                        <div id="account_cart">
+                            <button id="btn_account">
+                                @{ Html.RenderAction("ViewLogin", "RegisterAndLogin");}
+                            </button>
+                            <button id="btn_cart">
+                                <a href="/gio-hang" class="d-flex align-items-center">
+                                    <img src="~/Content/client/assets/img/shopping.png" alt="Giỏ hàng" />
+                                    @{ Html.RenderAction("HeaderCart", "Home");}
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav id="mainmenu" class="hidden-xs hidden-sm ">
+            <div class="container">
+                <ul class="x1">
+                    <li><a href="/Home/Index">Trang chủ</a></li>
+                    <li class="dropdown">
+                        <a class="btn dropdown-toggle" id="dropdown_category" aria-expanded="false">Danh Mục</a>
+                        @{ Html.RenderAction("Menu", "CategoryProduct");}
+                    </li>
+
+                    <li><a href="/Product/ShowProduct/">Sản phẩm</a></li>
+                    <li><a href="/Product/Hots">Hot nhất</a></li>
+                    <li><a href="/Product/Sales">Khuyến mãi</a></li>
+                    <li><a href="/News/Index">Tin tức</a></li>
+
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div id="home">
+        <div class="container">
+            <section id="featured" class="mb-4">
+                @*slider*@
+                <div style="position: relative;">
+                    <div>
+                        <img class="slider img-fluid" src="~/image/slide1.jpg" stt="0" alt="" />
+                        <img class="slider img-fluid" src="~/image/slide2.jpg" stt="1" alt="" style="display:none;" />
+                        <img class="slider img-fluid" src="~/image/slide3.jpg" alt="" stt="2" style="display:none;" />
+                        <img class="slider img-fluid" src="~/image/slide4.jpg" alt="" stt="3" style="display:none;" />
+                        <a href="" id="prev" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); z-index: 10;"><img src="~/image/Previous-icon.png" width="32" height="32" alt="Previous" /></a>
+                        <a href="" id="next" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); z-index: 10;"><img src="~/image/Next-2-2-icon.png" width="32" height="32" alt="Next" /></a>
+                    </div>
+                </div>
+            </section>
+            @*main*@
+            <section id="main" class="row">
+                @*left pannel*@
+                <div id="left" class="col-xs-12 col-sm-4 col-md-3">
+                    @*search by price*@
+                    <div class="boxleft hidden-xs">
+                        <div class="titboxl">
+                            <i class="fa fa-money fa-lg" aria-hidden="true"></i>
+                            <span>Mức Giá</span>
+                        </div>
+                        <div class="ctboxleft">
+                            <div class="boxspl" style="text-align:left;">
+                                <form id="priceForm" action="/Product/SearchFocus" method="get">
+                                    <div style="margin-left: 0px;">
+                                        <div class="form-check my-2">
+                                            <input type="checkbox" class="form-check-input price-check" id="check0" name="check0" value="true">
+                                            <label class="form-check-label" for="check0">Dưới 100K</label>
+                                        </div>
+                                        <div class="form-check my-2">
+                                            <input type="checkbox" class="form-check-input price-check" id="check1" name="check1" value="true">
+                                            <label class="form-check-label" for="check1">100K - dưới 200k</label>
+                                        </div>
+                                        <div class="form-check my-2">
+                                            <input type="checkbox" class="form-check-input price-check" id="check2" name="check2" value="true">
+                                            <label class="form-check-label" for="check2">200K - dưới 300K</label>
+                                        </div>
+                                        <div class="form-check my-2">
+                                            <input type="checkbox" class="form-check-input price-check" id="check3" name="check3" value="true">
+                                            <label class="form-check-label" for="check3">300K - dưới 400K</label>
+                                        </div>
+                                        <div class="form-check my-2">
+                                            <input type="checkbox" class="form-check-input price-check" id="check4" name="check4" value="true">
+                                            <label class="form-check-label" for="check4">Từ 400K trở lên</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Nơi hiển thị lỗi -->
+                                    <div id="priceError" style="color: red; margin-top: 5px; display: none;">Hãy chọn mức giá</div>
+
+                                    <div style="text-align: center; margin-top: 10px;">
+                                        <input type="submit" class="btn btn-secondary" value="Xem" />
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @*hot product*@
+                    <div class="boxleft hidden-xs">
+                        @Html.Action("ProductHot", "Product")
+                    </div>
+                    @*news - Đã được sửa lỗi CSS*@
+                    <div class="boxleft hidden-xs">
+                        <div class="titboxl">
+                            <i class="fa fa-rss-square fa-lg" aria-hidden="true"></i>
+                            <span>TIN TỨC</span>
+                        </div>
+                        <div class="ctboxleft">
+                            <div id="slider-tintuc" class="owl-carousel">
+                                @Html.Action("NewsHot", "News")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*end left pannel*@
+
+                @*main screen*@
+                <div id="maincontent" class="col-xs-12 col-sm-8 col-md-9">
+                    @RenderSection("Noidungbenphai", required: false)
+                    @RenderSection("Noidungmenu", required: false)
+                    @RenderBody()
+                </div>
+                @*end main screen*@
+            </section>
+        </div>
+    </div>
+    @*chatai*@
+    <!-- Chatbot Button -->
+    <!--<div id="chatbotai-button" style="right:120px;bottom:25px;">🤖</div>-->
+    <!-- Chatbot Box -->
+    <!--<div id="chatbotai-box" style="display:none;">
+        <div id="chatbotai-header">Nhân Viên AI Tư Vấn</div>
+        <div id="chatbotai-messages"></div>
+        <div style="display:flex; padding:15px;">
+            <input type="text" id="chatbotai-input" placeholder="Nhập câu hỏi..." />
+            <button id="chatbotai-send">Gửi</button>
+        </div>
+    </div>-->
+    <!-- CSS & JS Files -->
+    @*<link rel="stylesheet" href="@Url.Content("~/Content/chatbotai.css?v=1")" />*@
+    <!--<script src="~/Scripts/chatbotai.js"></script>-->
+    @*chatai*@
+    @*<div id="chatbot-button">🤖</div>*@
+    @*chatbot*@
+    <div id="chatbot-button">📨</div>
+    <div id="chatbot-greeting">Xin chào! Bạn có thể nhắn tin với cửa hàng ở đây 💬</div>
+    <div id="chatbot-box" style="display:none;">
+        <div id="chatbot-header">Nhắn tin với cửa hàng</div>
+        <div id="chatbot-messages"></div>
+        <div style="display:flex; padding:5px;">
+            <input type="text" id="chatbot-input" placeholder="Nhập câu hỏi..." style="flex:1; padding:5px;" />
+            <button id="chatbot-send" style="margin-left:5px;">Gửi</button>
+        </div>
+    </div>
+    <link rel="stylesheet" href="@Url.Content("~/Content/chatbot.css?v=1")" />
+    <script src="~/Scripts/chatbot.js"></script>
+    @*chatbot*@
+    <footer id="footer" style="
+    background-color: #e8d0b3; /* --secondary-color: Nền Be Nhạt */
+    color: #A0522D; /* --primary-color: Chữ Nâu Đậm */
+    padding: 50px 0;
+    margin-top: 30px;
+    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.05); /* Hiệu ứng nổi */
+">
+        <div class="container">
+            <div class="f1 row">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="tit-boxmain" style="text-align: center;">
+                        <h3><span style="border-bottom-color: #A0522D; color:#A0522D">Studio Nội Thất</span></h3>
+                    </div>
+                    <div class="ct-boxft1" style="text-align: center;">
+                        <p><span>Đẹp - Sang Trọng - Tinh tế</span></p>
+                        <p>Địa chỉ: Phú Nhuận - Thành Phố Huế</p>
+                        <p>Hotline: 0964 155 923</p>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
+                    <div class="tit-boxmain" style="text-align: center;">
+                        <h3><span style="border-bottom-color: #A0522D; color:#A0522D" ">Về chúng tôi</span></h3>
+                    </div>
+                    <div class="ct-boxft1" style="text-align: center;">
+                        <ul>
+                            <li><a href="" style="color: #A0522D;">Giới thiệu</a></li>
+                            <li><a href="" style="color: #A0522D;">Chính sách & Quy định</a></li>
+                            <li><a href="" style="color: #A0522D;">Tuyển dụng</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
+                    <div class="tit-boxmain" style="text-align: center;">
+                        <h3><span style="border-bottom-color: #A0522D;color:#A0522D" ">Hỗ trợ</span></h3>
+                    </div>
+                    <div class="ct-boxft1" style="text-align: center;">
+                        <ul>
+                            <li><a href="" style="color: #A0522D;">Chính sách vận chuyển</a></li>
+                            <li><a href="" style="color: #A0522D;">Chính sách thanh toán</a></li>
+                            <li><a href="" style="color: #A0522D;">Bản đồ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-2">
+                    <div class="tit-boxmain" style="text-align: center;">
+                        <h3><span style="border-bottom-color: #A0522D;color:#A0522D" ">Mạng xã hội</span></h3>
+                    </div>
+                    <div class="ct-boxft1" style="text-align: center; margin-top:20px;">
+                        <a href="#" style="color: #A0522D; margin: 0 5px;"><i class="fa fa-facebook-square fa-2x"></i></a>
+                        <a href="#" style="color: #A0522D; margin: 0 5px;"><i class="fa fa-instagram fa-2x"></i></a>
+                        <a href="#" style="color: #A0522D; margin: 0 5px;"><i class="fa fa-youtube-square fa-2x"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="tit-boxmain" style="text-align: center;">
+                        <h3><span style="border-bottom-color: #A0522D; color:#A0522D" ">Facebook</span></h3>
+                    </div>
+                    <div class="ct-boxft1" style="text-align: center;">
+                        <div class="fb-page" data-href="#" data-tabs="timeline" data-width="" data-height="150" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                            <blockquote cite="#" class="fb-xfbml-parse-ignore">
+                                <a href="#">Facebook Page</a>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid text-center mt-4" style="border-top: 1px solid #A0522D; padding-top: 15px;">
+            <p style="margin:0; font-size: 13px; color: #A0522D;">&copy; @DateTime.Now.Year CAYCANHANHVU.VN. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    @*khi move qua cart*@
+    <script type="text/javascript">
+        $("#btn_cart").hover(function () {
+            $(".top-cart-content").css("display", "block");
+        }, function () {
+            $(".top-cart-content").css("display", "none");
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var stt = 0;
+            starimg = $("img.slider:first").attr("stt")
+            endimg = $("img.slider:last").attr("stt")
+
+            $("img.slider").each(function () {
+                if ($(this).is(':visible'))
+                    stt = $(this).attr("stt");
+            });
+            $("#next").click(function () {
+                if (stt == endimg) {
+                    stt = -1;
+                }
+                next = ++stt;
+                $("img.slider").hide();
+                $("img.slider").eq(next).show();
+            });
+            $("#prev").click(function () {
+                if (stt == 0) {
+                    stt = endimg;
+                    prev = stt++;
+                }
+                prev = --stt;
+                $("img.slider").hide();
+                $("img.slider").eq(next).show();
+            });
+            setInterval(function () {
+                $("#next").click()
+            }, 2000);
+        })
+    </script>
+
+    <!-- Owl Carousel Assets -->
+
+    <script src="~/Content/css/owl.carousel.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#slider-tintuc").owlCarousel({
+                autoPlay: 3000,
+                navigation: true,
+                slideSpeed: 300,
+                paginationSpeed: 400,
+                singleItem: true
+            });
+            $("#spmoi").owlCarousel({
+                autoPlay: 3000,
+                // items : 4,
+                //  itemsDesktop : [1199,3],
+                //  itemsDesktopSmall : [979,3],
+                //  itemsMobile : [768,2]
+                itemsCustom: [
+                    [0, 2],
+                    [600, 3],
+                    [1200, 4],
+                ],
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        // hidden-show children menu
+        $(document).ready(function () {
+            //use event delegation since classes are changed dynamically
+            $('.ulspmobi').on('click', '.iconlist', function () {
+                //remove the show class and assign hidden
+                $(this).toggleClass('iconlist1 iconlist');
+                //the subfield is a child of the parent not the next sibling
+                $(this).siblings('ul.mnboxl_1').show('slow');
+            });
+            $('.ulspmobi').on('click', '.iconlist1', function () {
+                $(this).toggleClass('iconlist1 iconlist');
+                $(this).siblings('ul.mnboxl_1').hide('slow');
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#mymodaldangky").click(function () {
+                $("#mymodaldangky").modal('show');
+            });
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+
+    @RenderSection("jsFooter", required: false)
+    <script>
+        $(document).ready(function () {
+            $('#priceForm').on('submit', function (e) {
+                // Kiểm tra nếu không có checkbox nào được chọn
+                if ($('.price-check:checked').length === 0) {
+                    e.preventDefault(); // Ngăn form submit
+                    $('#priceError').show(); // Hiển thị thông báo lỗi
+                } else {
+                    $('#priceError').hide(); // Ẩn thông báo nếu có chọn
+                }
+            });
+        });
+    </script>
+</body>
+</html>
