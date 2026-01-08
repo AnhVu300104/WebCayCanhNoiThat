@@ -1,18 +1,18 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\",
+  "WorkspaceRootPath": "C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|c:\\users\\hp\\downloads\\website-ban-noi-that-main\\websitenoithat\\websitenoithat\\areas\\admin\\views\\stockin\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|solutionrelative:websitenoithat\\areas\\admin\\views\\stockin\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\websitenoithat\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|solutionrelative:websitenoithat\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|c:\\users\\hp\\downloads\\website-ban-noi-that-main\\websitenoithat\\websitenoithat\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|c:\\users\\hp\\downloads\\webnoithatcaycanh\\websitenoithat\\websitenoithat\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|solutionrelative:websitenoithat\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\websitenoithat\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|solutionrelative:websitenoithat\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|c:\\users\\hp\\downloads\\website-ban-noi-that-main\\websitenoithat\\websitenoithat\\areas\\admin\\views\\stockout\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0E199E9F-EE11-46AD-B40F-BE68E855CDED}|WebsiteNoiThat\\WebsiteNoiThat.csproj|solutionrelative:websitenoithat\\areas\\admin\\views\\stockout\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,42 +38,41 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockOut\\Create.cshtml",
-              "RelativeDocumentMoniker": "WebsiteNoiThat\\Areas\\Admin\\Views\\StockOut\\Create.cshtml",
-              "ToolTip": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockOut\\Create.cshtml",
-              "RelativeToolTip": "WebsiteNoiThat\\Areas\\Admin\\Views\\StockOut\\Create.cshtml",
-              "ViewState": "AgIAAFUAAAAAAAAAAAAewGkAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-12-19T01:09:33.645Z",
+              "DocumentIndex": 1,
+              "Title": "Web.config",
+              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\WebsiteNoiThat\\Web.config",
+              "RelativeDocumentMoniker": "WebsiteNoiThat\\Web.config",
+              "ToolTip": "C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\WebsiteNoiThat\\Web.config",
+              "RelativeToolTip": "WebsiteNoiThat\\Web.config",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAiwI0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2026-01-08T12:23:30.546Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn\\Create.cshtml",
-              "RelativeDocumentMoniker": "WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn\\Create.cshtml",
-              "ToolTip": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn\\Create.cshtml",
-              "RelativeToolTip": "WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn\\Create.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAUAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-12-19T01:09:16.239Z",
+              "Title": "CartController.cs",
+              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\WebsiteNoiThat\\Controllers\\CartController.cs",
+              "RelativeDocumentMoniker": "WebsiteNoiThat\\Controllers\\CartController.cs",
+              "ToolTip": "C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\WebsiteNoiThat\\Controllers\\CartController.cs",
+              "RelativeToolTip": "WebsiteNoiThat\\Controllers\\CartController.cs",
+              "ViewState": "AgIAABUFAAAAAAAAAAAAwB8FAABTAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-08T03:10:55.831Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\HP\\Downloads\\website-ban-noi-that-main\\WebsiteNoiThat\\WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\HP\\Downloads\\WebNoiThatCayCanh\\WebsiteNoiThat\\WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "WebsiteNoiThat\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAmwBsAAABOAAAAAAAAAA==",
+              "ViewState": "AgIAAMgCAAAAAAAAAAAQwM4CAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-12-18T14:46:23.019Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-18T14:46:23.019Z"
             }
           ]
         },

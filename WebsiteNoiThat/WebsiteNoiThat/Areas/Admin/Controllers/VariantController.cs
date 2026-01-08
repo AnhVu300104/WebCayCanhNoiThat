@@ -43,7 +43,6 @@ namespace WebsiteNoiThat.Areas.Admin.Controllers
                 .ToList();
 
             // ✅ TÍNH TỔNG TỒN KHO TỪ BIẾN THỂ
-            // ✅ TÍNH TỔNG TỒN KHO TỪ BIẾN THỂ
             try
             {
                 var totalStock = db.ProductVariants
@@ -51,13 +50,13 @@ namespace WebsiteNoiThat.Areas.Admin.Controllers
                     .Sum(v => (int?)v.StockQuantity) ?? 0;
 
                 ViewBag.TotalStock = totalStock;
-                ViewBag.StockError = null; // Không có lỗi
+                ViewBag.StockError = null;
             }
             catch (Exception ex)
             {
                 ViewBag.TotalStock = 0;
-                ViewBag.StockError = ex.Message; // Lưu lỗi vào ViewBag
-                ViewBag.StackTrace = ex.StackTrace; // Chi tiết lỗi
+                ViewBag.StockError = ex.Message;
+                ViewBag.StackTrace = ex.StackTrace;
             }
             return View(variants);
         }
@@ -74,11 +73,7 @@ namespace WebsiteNoiThat.Areas.Admin.Controllers
             if (product == null) return RedirectToAction("Index", "Product");
 
             ViewBag.Product = product;
-
-            // Lấy thuộc tính và giá trị
             ViewBag.Attributes = attrDao.GetAttributesWithValues();
-
-            // Lấy danh sách kho ACTIVE để chọn
             ViewBag.Warehouses = db.Warehouses
                                    .Where(w => w.IsActive == true)
                                    .OrderBy(w => w.Name)
@@ -92,6 +87,12 @@ namespace WebsiteNoiThat.Areas.Admin.Controllers
         [HasCredential(RoleId = "ADD_PRODUCT")]
         public ActionResult Create(ProductVariant model, HttpPostedFileBase ImageFile, int[] AttributeIds, int[] ValueIds)
         {
+            // ✅ VALIDATION: Giá bán biến thể phải > 0
+            if (model.SalePrice <= 0)
+            {
+                ModelState.AddModelError("SalePrice", "Giá bán biến thể phải lớn hơn 0!");
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -176,7 +177,6 @@ namespace WebsiteNoiThat.Areas.Admin.Controllers
                                        .Where(x => x.VariantId == id)
                                        .ToList();
 
-            // Lấy danh sách kho ACTIVE
             ViewBag.Warehouses = db.Warehouses
                                    .Where(w => w.IsActive == true)
                                    .OrderBy(w => w.Name)
@@ -190,6 +190,12 @@ namespace WebsiteNoiThat.Areas.Admin.Controllers
         [HasCredential(RoleId = "EDIT_PRODUCT")]
         public ActionResult Edit(ProductVariant model, HttpPostedFileBase ImageFile, int[] AttributeIds, int[] ValueIds)
         {
+            // ✅ VALIDATION: Giá bán biến thể phải > 0
+            if (model.SalePrice <= 0)
+            {
+                ModelState.AddModelError("SalePrice", "Giá bán biến thể phải lớn hơn 0!");
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -202,7 +208,7 @@ namespace WebsiteNoiThat.Areas.Admin.Controllers
                     existingVariant.StockQuantity = model.StockQuantity;
                     existingVariant.SKU = model.SKU;
                     existingVariant.IsActive = model.IsActive;
-                    existingVariant.WarehouseId = model.WarehouseId; // THÊM MỚI
+                    existingVariant.WarehouseId = model.WarehouseId;
 
                     // 2. Xử lý ảnh
                     if (ImageFile != null && ImageFile.ContentLength > 0)
@@ -282,7 +288,9 @@ namespace WebsiteNoiThat.Areas.Admin.Controllers
             return RedirectToAction("Index", new { productId = productId });
         }
 
-        // Helper: Cập nhật tổng số lượng tồn kho
+        // =============================================
+        // HELPER: CẬP NHẬT TỔNG SỐ LƯỢNG TỒN KHO
+        // =============================================
         private void UpdateProductTotalQuantity(int productId)
         {
             var totalQty = db.ProductVariants

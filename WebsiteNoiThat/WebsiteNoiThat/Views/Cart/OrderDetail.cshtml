@@ -1,7 +1,7 @@
 ﻿@model WebsiteNoiThat.Models.OrderSuccessViewModel
 
 @{
-    ViewBag.Title = "Chi tiết đơn hàng #" + Model.Order.OrderId;
+    ViewBag.Title = "Chi tiết đơn hàng #" + Model?.Order?.OrderId;
 }
 
 <style>
@@ -12,7 +12,7 @@
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .back-link {
+    .back-button {
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -20,67 +20,57 @@
         text-decoration: none;
         font-weight: 600;
         margin-bottom: 20px;
+        padding: 10px 15px;
+        border-radius: 8px;
         transition: all 0.3s;
     }
 
-    .back-link:hover {
-        color: #A0522D;
-        transform: translateX(-5px);
-    }
+        .back-button:hover {
+            background: #f8f9fa;
+            color: #A0522D;
+            text-decoration: none;
+        }
 
     .detail-card {
         background: white;
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         overflow: hidden;
+        margin-bottom: 30px;
     }
 
     .detail-header {
         background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
         color: white;
-        padding: 30px;
+        padding: 40px 30px;
+        text-align: center;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        background: rgba(255,255,255,0.2);
     }
 
     .detail-header h2 {
         margin: 0 0 10px 0;
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 700;
     }
 
-    .detail-header .status {
-        display: inline-block;
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        background: rgba(255,255,255,0.2);
+    .detail-header p {
+        margin: 0;
+        font-size: 1.1rem;
+        opacity: 0.95;
     }
 
-    .order-info {
+    .order-info-section {
         padding: 30px;
         border-bottom: 2px dashed #e9ecef;
-    }
-
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        font-size: 1rem;
-    }
-
-    .info-label {
-        color: #6c757d;
-        font-weight: 500;
-    }
-
-    .info-value {
-        color: #2d3748;
-        font-weight: 600;
-        text-align: right;
-    }
-
-    .order-details {
-        padding: 30px;
     }
 
     .section-title {
@@ -92,57 +82,96 @@
         border-bottom: 3px solid #8B4513;
     }
 
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 12px;
+        border-left: 4px solid #8B4513;
+    }
+
+        .info-box .label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .info-box .value {
+            font-size: 1rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+    .products-section {
+        padding: 30px;
+    }
+
     .product-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 15px;
+        padding: 20px;
         background: #f8f9fa;
-        border-radius: 8px;
-        margin-bottom: 12px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        transition: all 0.3s;
     }
+
+        .product-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
 
     .product-info {
         flex: 1;
     }
 
     .product-name {
-        font-weight: 600;
+        font-weight: 700;
         color: #2d3748;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
     }
 
     .product-variant {
         font-size: 0.9rem;
         color: #6c757d;
+        margin-bottom: 5px;
     }
 
     .product-quantity {
         font-size: 0.9rem;
         color: #6c757d;
-        margin-top: 3px;
     }
 
     .product-price {
         text-align: right;
-        margin-left: 15px;
+        margin-left: 20px;
     }
 
     .product-unit-price {
         font-size: 0.9rem;
         color: #6c757d;
+        margin-bottom: 5px;
     }
 
     .product-total-price {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: 700;
         color: #8B4513;
     }
 
-    .order-total {
+    .order-total-section {
         background: linear-gradient(135deg, #fdf8f3 0%, #f5ebe0 100%);
-        padding: 20px 30px;
-        border-radius: 8px;
+        padding: 25px 30px;
+        border-radius: 12px;
         margin-top: 20px;
     }
 
@@ -153,199 +182,272 @@
     }
 
     .total-label {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-weight: 700;
         color: #2d3748;
     }
 
     .total-value {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 800;
         color: #8B4513;
     }
+
+    .note-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+        .note-box p {
+            margin: 0;
+            color: #856404;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
 
     .action-buttons {
         padding: 30px;
         display: flex;
         gap: 15px;
+        justify-content: center;
     }
 
     .btn {
-        flex: 1;
-        padding: 14px 25px;
-        border-radius: 8px;
+        padding: 14px 30px;
+        border-radius: 10px;
         font-size: 1rem;
         font-weight: 600;
         text-align: center;
         text-decoration: none;
         transition: all 0.3s;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
         border: none;
         cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .btn-secondary {
+    .btn-back {
         background: white;
         color: #8B4513;
         border: 2px solid #8B4513;
     }
 
-    .btn-secondary:hover {
-        background: #8B4513;
+        .btn-back:hover {
+            background: #8B4513;
+            color: white;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+    .btn-home {
+        background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
         color: white;
-        transform: translateY(-2px);
-        text-decoration: none;
     }
 
-    .btn-danger {
-        background: white;
-        color: #dc3545;
-        border: 2px solid #dc3545;
-    }
-
-    .btn-danger:hover {
-        background: #dc3545;
-        color: white;
-        transform: translateY(-2px);
-    }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+            color: white;
+            text-decoration: none;
+        }
 
     @@media (max-width: 768px) {
+        .product-item {
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .product-price {
+            width: 100%;
+            text-align: left;
+            margin-left: 0;
+        }
+
         .action-buttons {
             flex-direction: column;
         }
 
-        .info-row {
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .info-value {
-            text-align: left;
+        .btn {
+            width: 100%;
+            justify-content: center;
         }
     }
 </style>
 
 <div class="detail-container">
-    <a href="@Url.Action("HistoryCart", "Cart")" class="back-link">
-        ← Quay lại danh sách đơn hàng
+    <a href="@Url.Action("HistoryCart", "Cart")" class="back-button">
+        <span>←</span>
+        <span>Quay lại lịch sử đơn hàng</span>
     </a>
 
-    <div class="detail-card">
-        <!-- Header -->
-        <div class="detail-header">
-            <h2>Đơn hàng #@Model.Order.OrderId</h2>
-            <span class="status">
-                @{
-                    var statusText = "";
-                    switch (Model.Order.StatusId)
-                    {
-                        case 1: statusText = "Chờ xử lý"; break;
-                        case 2: statusText = "Đang giao"; break;
-                        case 3: statusText = "Hoàn thành"; break;
-                        case 4:
-                        case 5: statusText = "Đã huỷ"; break;
-                        default: statusText = "Không xác định"; break;
-                    }
-                }
-                @statusText
-            </span>
-        </div>
+    @if (Model?.Order != null)
+    {
+        var statusText = "";
+        var statusIcon = "";
 
-        <!-- Thông tin đơn hàng -->
-        <div class="order-info">
-            <div class="info-row">
-                <span class="info-label">📅 Ngày đặt:</span>
-                <span class="info-value">@Model.Order.CreatedDate</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">👤 Người nhận:</span>
-                <span class="info-value">@Model.Order.ShipName</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">📞 Số điện thoại:</span>
-                <span class="info-value">@Model.Order.ShipPhone</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">📧 Email:</span>
-                <span class="info-value">@Model.Order.ShipEmail</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">📍 Địa chỉ giao hàng:</span>
-                <span class="info-value">@Model.Order.ShipAddress</span>
-            </div>
-        </div>
+        switch (Model.Order.StatusId)
+        {
+            case 1:
+                statusText = "Đã tiếp nhận";
+                statusIcon = "⏳";
+                break;
+            case 2:
+                statusText = "Đang xử lý";
+                statusIcon = "⚙️";
+                break;
+            case 3:
+                statusText = "Đang giao hàng";
+                statusIcon = "🚚";
+                break;
+            case 4:
+                statusText = "Đã giao hàng";
+                statusIcon = "✅";
+                break;
+            case 5:
+                statusText = "Đã hủy";
+                statusIcon = "❌";
+                break;
+            default:
+                statusText = "Không xác định";
+                statusIcon = "❓";
+                break;
+        }
 
-        <!-- Chi tiết sản phẩm -->
-        <div class="order-details">
-            <h3 class="section-title">📦 Chi tiết sản phẩm</h3>
+        <div class="detail-card">
+            <!-- Header -->
+            <div class="detail-header">
+                <div class="status-badge">@statusIcon @statusText</div>
+                <h2>Đơn hàng #@Model.Order.OrderId</h2>
+                <p>Chi tiết đơn hàng của bạn</p>
+            </div>
 
-            @if (Model.OrderDetails != null && Model.OrderDetails.Count > 0)
-            {
-                foreach (var item in Model.OrderDetails)
-                {
-                    <div class="product-item">
-                        <div class="product-info">
-                            <div class="product-name">@item.ProductName</div>
-                            @if (!string.IsNullOrEmpty(item.VariantInfo) && item.VariantInfo != "Mặc định")
-                            {
-                                <div class="product-variant">🏷️ @item.VariantInfo</div>
-                            }
-                            <div class="product-quantity">Số lượng: <strong>@item.Quantity</strong></div>
-                        </div>
-                        <div class="product-price">
-                            <div class="product-unit-price">@string.Format("{0:N0}", item.Price)₫</div>
-                            <div class="product-total-price">@string.Format("{0:N0}", item.Total)₫</div>
-                        </div>
+            <!-- Thông tin khách hàng -->
+            <div class="order-info-section">
+                <h3 class="section-title">📋 Thông tin đơn hàng</h3>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="label">📅 Ngày đặt hàng</div>
+                        <div class="value">@(Model.Order.CreatedDate?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</div>
                     </div>
-                }
-
-                <div class="order-total">
-                    <div class="total-row">
-                        <span class="total-label">💰 Tổng thanh toán:</span>
-                        <span class="total-value">@string.Format("{0:N0}", Model.Total)₫</span>
+                    <div class="info-box">
+                        <div class="label">👤 Người nhận</div>
+                        <div class="value">@Model.Order.ShipName</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="label">📞 Số điện thoại</div>
+                        <div class="value">@Model.Order.ShipPhone</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="label">✉️ Email</div>
+                        <div class="value">@Model.Order.ShipEmail</div>
                     </div>
                 </div>
-            }
-        </div>
+                <div class="info-grid" style="margin-top: 15px;">
+                    <div class="info-box" style="grid-column: 1 / -1;">
+                        <div class="label">📍 Địa chỉ giao hàng</div>
+                        <div class="value">@Model.Order.ShipAddress</div>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Buttons -->
-        <div class="action-buttons">
-            <a href="@Url.Action("HistoryCart", "Cart")" class="btn btn-secondary">
-                📋 Danh sách đơn hàng
-            </a>
-            @if (Model.Order.StatusId == 1)
-            {
-                <button onclick="cancelOrder(@Model.Order.OrderId)" class="btn btn-danger">
-                    ❌ Huỷ đơn hàng
-                </button>
-            }
-        </div>
-    </div>
-</div>
+            <!-- Danh sách sản phẩm -->
+            <div class="products-section">
+                <h3 class="section-title">📦 Sản phẩm đã đặt</h3>
 
-@section Scripts {
-    <script>
-        function cancelOrder(orderId) {
-            if (!confirm('Bạn có chắc chắn muốn huỷ đơn hàng này?')) {
-                return;
-            }
-
-            $.ajax({
-                url: '@Url.Action("CancelOrder", "Cart")',
-                type: 'POST',
-                data: { id: orderId },
-                success: function(response) {
-                    if (response.success) {
-                        alert(response.message);
-                        window.location.href = '@Url.Action("HistoryCart", "Cart")';
-                    } else {
-                        alert(response.message);
+                @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                {
+                    foreach (var item in Model.OrderDetails)
+                    {
+                        <div class="product-item">
+                            <div class="product-info">
+                                <div class="product-name">@item.ProductName</div>
+                                @if (!string.IsNullOrEmpty(item.VariantInfo) && item.VariantInfo != "Mặc định")
+                                {
+                                    <div class="product-variant">🏷️ @item.VariantInfo</div>
+                                }
+                                <div class="product-quantity">
+                                    <strong>Số lượng:</strong> @item.Quantity
+                                </div>
+                            </div>
+                            <div class="product-price">
+                                <div class="product-unit-price">
+                                    Đơn giá: @string.Format("{0:N0}", item.Price)₫
+                                </div>
+                                <div class="product-total-price">
+                                    @string.Format("{0:N0}", item.Total)₫
+                                </div>
+                            </div>
+                        </div>
                     }
-                },
-                error: function() {
-                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+
+                    <div class="order-total-section">
+                        <div class="total-row">
+                            <span class="total-label">💰 Tổng thanh toán:</span>
+                            <span class="total-value">@string.Format("{0:N0}", Model.Total)₫</span>
+                        </div>
+                    </div>
                 }
-            });
-        }
-    </script>
-}
+                else
+                {
+                    <div style="text-align: center; padding: 40px; color: #6c757d;">
+                        <p>Không tìm thấy chi tiết sản phẩm</p>
+                    </div>
+                }
+
+                <div class="note-box">
+                    <p>
+                        <strong>📌 Lưu ý:</strong>
+                        @if (Model.Order.StatusId == 1)
+                        {
+                            <text>Đơn hàng của bạn đang được xử lý. Chúng tôi sẽ liên hệ với bạn sớm nhất để xác nhận.</text>
+                        }
+                        else if (Model.Order.StatusId == 2)
+                        {
+                            <text>Đơn hàng đã được xác nhận và đang chuẩn bị hàng. Bạn sẽ nhận được thông báo khi hàng được giao.</text>
+                        }
+                        else if (Model.Order.StatusId == 3)
+                        {
+                            <text>Đơn hàng đang trên đường giao đến bạn. Vui lòng giữ liên lạc qua số điện thoại.</text>
+                        }
+                        else if (Model.Order.StatusId == 4)
+                        {
+                            <text>Đơn hàng đã được giao thành công. Cảm ơn bạn đã mua hàng!</text>
+                        }
+                        else if (Model.Order.StatusId == 5)
+                        {
+                            <text>Đơn hàng đã bị hủy. Nếu có thắc mắc, vui lòng liên hệ với chúng tôi.</text>
+                        }
+                    </p>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="action-buttons">
+                <a href="@Url.Action("HistoryCart", "Cart")" class="btn btn-back">
+                    <span>📋</span>
+                    <span>Xem đơn hàng khác</span>
+                </a>
+                <a href="@Url.Action("ShowProduct", "Product")" class="btn btn-home">
+                    <span>🛒</span>
+                    <span>Tiếp tục mua sắm</span>
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="detail-card" style="padding: 60px; text-align: center;">
+            <h3 style="color: #6c757d;">Không tìm thấy đơn hàng</h3>
+            <p style="color: #9ca3af; margin-bottom: 20px;">Đơn hàng không tồn tại hoặc bạn không có quyền xem.</p>
+            <a href="@Url.Action("HistoryCart", "Cart")" class="btn btn-back">
+                ← Quay lại
+            </a>
+        </div>
+    }
+</div>

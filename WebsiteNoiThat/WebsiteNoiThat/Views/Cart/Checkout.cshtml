@@ -357,7 +357,37 @@
         }
     }
 </style>
+@* THÊM ĐOẠN NÀY VÀO ĐẦU FILE CHECKOUT.CSHTML *@
 
+@if (ViewBag.ErrorTitle != null)
+{
+    <div style="background: #fff3cd; border: 3px solid #dc3545; padding: 20px; margin: 20px 0; border-radius: 8px; max-height: 600px; overflow-y: auto;">
+        <h2 style="color: #dc3545; margin-top: 0;">@ViewBag.ErrorTitle</h2>
+        <div style="background: white; padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; border: 1px solid #ddd; border-radius: 4px;">
+            @Html.Raw(ViewBag.FullError)
+        </div>
+        <div style="margin-top: 15px; padding: 15px; background: #f8d7da; border-left: 4px solid #dc3545;">
+            <strong>💡 Hướng dẫn debug:</strong>
+            <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                <li>Xem phần <strong>InnerException</strong> - đây là lỗi thực sự</li>
+                <li>Kiểm tra phần <strong>VALIDATION ERRORS</strong> nếu có</li>
+                <li>Xem <strong>Output Window</strong> trong Visual Studio (Ctrl + W, O)</li>
+                <li>Kiểm tra <strong>SQL Server Profiler</strong> nếu là lỗi database</li>
+            </ul>
+        </div>
+    </div>
+}
+
+@* Hiển thị ModelState Errors *@
+@if (!ViewData.ModelState.IsValid)
+{
+    <div style="background: #f8d7da; border: 2px solid #dc3545; padding: 15px; margin: 20px 0; border-radius: 5px;">
+        <h4 style="color: #721c24; margin-top: 0;">⚠️ Lỗi Validation:</h4>
+        @Html.ValidationSummary(false, "", new { @class = "text-danger", style = "font-family: monospace; white-space: pre-wrap;" })
+    </div>
+}
+
+@* Phần còn lại của Checkout view... *@
 <div class="checkout-container">
     <div class="checkout-header">
         <h3>🛍️ Thanh toán đơn hàng</h3>
@@ -370,7 +400,7 @@
     {
         using (Html.BeginForm("Checkout", "Cart", FormMethod.Post))
         {
-            @Html.AntiForgeryToken()
+            @*@Html.AntiForgeryToken()*@
 
             <div class="checkout-layout">
                 <!-- Cột trái: Sản phẩm và Thông tin giao hàng -->

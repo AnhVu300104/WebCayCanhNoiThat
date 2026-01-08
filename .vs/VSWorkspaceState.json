@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\WebsiteNoiThat",
+    "\\WebsiteNoiThat\\WebsiteNoiThat",
+    "\\WebsiteNoiThat\\WebsiteNoiThat\\Areas",
+    "\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin",
+    "\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views",
+    "\\WebsiteNoiThat\\WebsiteNoiThat\\Areas\\Admin\\Views\\StockIn",
+    "\\WebsiteNoiThat\\WebsiteNoiThat\\Views",
+    "\\WebsiteNoiThat\\WebsiteNoiThat\\Views\\Cart"
+  ],
+  "SelectedNode": "\\WebsiteNoiThat\\WebsiteNoiThat\\Views\\Cart\\HistoryCart.cshtml",
+  "PreviewInSolutionExplorer": false
+}

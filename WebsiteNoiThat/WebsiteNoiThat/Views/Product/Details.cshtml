@@ -105,24 +105,12 @@
         font-weight: bold;
     }
 
-    .price-old {
-        text-decoration: line-through;
+    .price-reference {
         color: #999;
-        font-size: 18px;
+        font-size: 14px;
         margin-left: 10px;
     }
 
-    .discount-badge {
-        display: inline-block;
-        background: #e74c3c;
-        color: white;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        margin-left: 8px;
-    }
-
-    /* Quantity Controls */
     .quantity-section {
         margin: 20px 0;
     }
@@ -275,33 +263,30 @@
             </td>
         </tr>
 
-        @* GIÁ ĐƠN VỊ *@
+        @* GIÁ BÁN - ✅ LOGIC MỚI *@
         <tr>
             <td>
                 <p class="status">
-                    Giá đơn vị:
+                    Giá bán:
+                    @{
+                        var firstVariant = Model.Variants.First();
+                        // ✅ LOGIC ĐÚNG: Ưu tiên SalePrice (giá bán thực tế)
+                        var displayPrice = firstVariant.SalePrice > 0
+                            ? firstVariant.SalePrice
+                            : firstVariant.Price;
+                    }
+
                     <span class="price-highlight" id="displayPrice">
-                        @{
-                            var firstVariant = Model.Variants.First();
-                            var displayPrice = firstVariant.SalePrice.HasValue && firstVariant.SalePrice > 0 && firstVariant.SalePrice < firstVariant.Price
-                                ? firstVariant.SalePrice.Value
-                                : firstVariant.Price;
-                        }
                         @string.Format("{0:#,###}₫", displayPrice)
                     </span>
 
-                    @if (firstVariant.SalePrice.HasValue && firstVariant.SalePrice > 0 && firstVariant.SalePrice < firstVariant.Price)
+                    @* Hiển thị giá tham chiếu nếu khác giá bán *@
+                    @if (firstVariant.Price > 0 && firstVariant.Price != displayPrice)
                     {
-                        <span class="price-old" id="displayOldPrice">
-                            @string.Format("{0:#,###}₫", firstVariant.Price)
+                        <span class="price-reference" id="displayRefPrice">
+                            (Giá gốc: @string.Format("{0:#,###}₫", firstVariant.Price))
                         </span>
-
-                        var discountPercent = (int)Math.Round(
-                (1 - ((double)firstVariant.SalePrice / (double)firstVariant.Price)) * 100
-                );
-
-                <span class="discount-badge">-@discountPercent%</span>
-            }
+                    }
                 </p>
             </td>
         </tr>
@@ -340,6 +325,7 @@
                 <div class="form-group">
                     <input type="hidden" id="selectedVariantId" value="@Model.Variants.First().VariantId" />
                     <input type="hidden" id="unitPrice" value="@displayPrice" />
+                    <input type="hidden" id="refPrice" value="@firstVariant.Price" />
                     <input type="hidden" id="maxStock" value="@Model.Variants.First().StockQuantity" />
                     <a style="font-family:unset;"
                        href="javascript:void(0);"
@@ -469,7 +455,7 @@
                 updateTotalPrice();
             });
 
-            // Xử lý khi click chọn phân loại
+            // ✅ LOGIC MỚI: Xử lý khi click chọn phân loại
             $('.variant-option').click(function () {
                 if ($(this).hasClass('disabled')) {
                     return;
@@ -483,14 +469,15 @@
 
                 // Lấy thông tin biến thể
                 var variantId = $(this).data('variant-id');
-                var price = $(this).data('price');
-                var salePrice = $(this).data('saleprice');
-                var stock = $(this).data('stock');
+                var price = parseFloat($(this).data('price')) || 0;
+                var salePrice = parseFloat($(this).data('saleprice')) || 0;
+                var stock = parseInt($(this).data('stock')) || 0;
                 var image = $(this).data('image');
                 var sku = $(this).data('sku');
 
                 // Cập nhật hidden input
                 $('#selectedVariantId').val(variantId);
+                $('#refPrice').val(price);
 
                 // Cập nhật ảnh
                 if (image) {
@@ -500,27 +487,20 @@
                 // Cập nhật SKU
                 $('#displaySKU').text(sku);
 
-                // Cập nhật giá
-                var displayPrice = (salePrice > 0 && salePrice < price) ? salePrice : price;
+                // ✅ LOGIC ĐÚNG: Ưu tiên SalePrice (giá bán thực tế)
+                var displayPrice = salePrice > 0 ? salePrice : price;
+
                 $('#displayPrice').text(formatCurrency(displayPrice) + '₫');
                 $('#unitPrice').val(displayPrice);
 
-                // Cập nhật giá cũ và badge giảm giá
-                if (salePrice > 0 && salePrice < price) {
-                    var discountPercent = Math.round((1 - (salePrice / price)) * 100);
-
-                    if ($('#displayOldPrice').length === 0) {
-                        $('#displayPrice').after('<span class="price-old" id="displayOldPrice"></span>');
+                // Hiển thị giá tham chiếu nếu khác giá bán
+                if (price > 0 && price != displayPrice) {
+                    if ($('#displayRefPrice').length === 0) {
+                        $('#displayPrice').after('<span class="price-reference" id="displayRefPrice"></span>');
                     }
-                    $('#displayOldPrice').text(formatCurrency(price) + '₫').show();
-
-                    if ($('.discount-badge').length === 0) {
-                        $('#displayOldPrice').after('<span class="discount-badge"></span>');
-                    }
-                    $('.discount-badge').text('-' + discountPercent + '%').show();
+                    $('#displayRefPrice').text('(Giá gốc: ' + formatCurrency(price) + '₫)').show();
                 } else {
-                    $('#displayOldPrice').hide();
-                    $('.discount-badge').hide();
+                    $('#displayRefPrice').hide();
                 }
 
                 // Cập nhật tồn kho

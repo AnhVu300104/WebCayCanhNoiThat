@@ -216,7 +216,7 @@ namespace WebsiteNoiThat.Controllers
         }
         // XÓA CÁC SẢN PHẨM ĐÃ CHỌN
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public ActionResult DeleteSelected(int[] cartItemIds)
         {
             var session = (UserLogin)Session[Commoncontent.user_sesion];
@@ -247,7 +247,7 @@ namespace WebsiteNoiThat.Controllers
             }
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public ActionResult DeleteItem(int cartItemId)
         {
             var session = (UserLogin)Session[Commoncontent.user_sesion];
@@ -266,7 +266,7 @@ namespace WebsiteNoiThat.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public ActionResult DeleteAll()
         {
             var session = (UserLogin)Session[Commoncontent.user_sesion];
@@ -304,15 +304,186 @@ namespace WebsiteNoiThat.Controllers
 
             return RedirectToAction("Index");
         }
+        //        [HttpPost]
+        //        public ActionResult Checkout(
+        //    CheckoutViewModel model,
+        //    string paymentMethod,
+        //    string Note
+        //)
+        //        {
+        //            // 1. Kiểm tra đăng nhập
+        //            var session = (UserLogin)Session[Commoncontent.user_sesion];
+        //            if (session == null)
+        //                return Redirect("/dang-nhap");
+
+        //            // 2. Lấy danh sách ID sản phẩm đã chọn từ Session
+        //            var selectedItems = Session["SelectedCartItems"] as int[];
+        //            if (selectedItems == null || selectedItems.Length == 0)
+        //            {
+        //                TempData["Error"] =
+        //                    "Phiên làm việc đã hết hạn hoặc chưa chọn sản phẩm. Vui lòng thử lại!";
+        //                return RedirectToAction("Index");
+        //            }
+
+        //            // 3. Validate dữ liệu
+        //            if (!ModelState.IsValid)
+        //            {
+        //                var cartItemsForView = db.GioHang
+        //                    .Where(c =>
+        //                        c.UserId == session.UserId &&
+        //                        selectedItems.Contains(c.GioHangId)
+        //                    )
+        //                    .ToList();
+
+        //                ViewBag.CartItems = GetCartItemsViewModel(cartItemsForView);
+        //                return View("Checkout", model);
+        //            }
+
+        //            using (var transaction = db.Database.BeginTransaction())
+        //            {
+        //                try
+        //                {
+        //                    // 4. Tạo đơn hàng
+        //                    var order = new Order
+        //                    {
+        //                        UserId = session.UserId,
+        //                        ShipName = model.ShipName,
+        //                        ShipPhone = model.ShipPhone,
+        //                        ShipEmail = model.ShipEmail,
+        //                        ShipAddress = model.ShipAddress,
+        //                        CreatedDate = DateTime.Now,
+        //                        UpdateDate = DateTime.Now,
+        //                        StatusId = 1 // 1: Chờ xử lý
+        //                    };
+
+        //                    int orderId = orderDao.Insert(order);
+
+        //                    // 5. Lấy sản phẩm từ giỏ hàng
+        //                    var cartItems = db.GioHang
+        //                        .Where(c =>
+        //                            c.UserId == session.UserId &&
+        //                            selectedItems.Contains(c.GioHangId)
+        //                        )
+        //                        .ToList();
+
+        //                    decimal totalAmount = 0;
+
+        //                    foreach (var gh in cartItems)
+        //                    {
+        //                        var product = db.Products.Find(gh.ProductId);
+        //                        var variant = gh.VariantId.HasValue
+        //                            ? db.ProductVariants.Find(gh.VariantId)
+        //                            : null;
+
+        //                        int currentPrice = (int)(
+        //                            variant?.SalePrice ??
+        //                            variant?.Price ??
+        //                            product?.Price ??
+        //                            0
+        //                        );
+
+        //                        totalAmount += currentPrice * gh.Quantity;
+
+        //                        var detail = new OrderDetail
+        //                        {
+        //                            OrderId = orderId,
+        //                            ProductId = gh.ProductId,
+        //                            VariantId = gh.VariantId,
+        //                            VariantInfo = gh.VariantInfo,
+        //                            Quantity = gh.Quantity,
+        //                            Price = currentPrice
+        //                        };
+
+        //                        orderDetailDao.Insert(detail);
+
+        //                        // 6. Trừ tồn kho
+        //                        if (variant != null)
+        //                        {
+        //                            if (variant.StockQuantity < gh.Quantity)
+        //                                throw new Exception(
+        //                                    $"Sản phẩm {product.Name} ({gh.VariantInfo}) không đủ tồn kho."
+        //                                );
+
+        //                            variant.StockQuantity -= gh.Quantity;
+        //                        }
+        //                        else if (product != null)
+        //                        {
+        //                            if (product.Quantity < gh.Quantity)
+        //                                throw new Exception(
+        //                                    $"Sản phẩm {product.Name} không đủ tồn kho."
+        //                                );
+
+        //                            product.Quantity -= gh.Quantity;
+        //                        }
+        //                    }
+
+        //                    // 7. Xóa giỏ hàng
+        //                    db.GioHang.RemoveRange(cartItems);
+        //                    db.SaveChanges();
+        //                    transaction.Commit();
+
+        //                    Session.Remove("SelectedCartItems");
+
+        //                    // 8. Gửi email
+        //                    try
+        //                    {
+        //                        SendOrderEmail(
+        //                            orderId,
+        //                            model,
+        //                            cartItems,
+        //                            totalAmount,
+        //                            paymentMethod,
+        //                            Note
+        //                        );
+
+        //                        TempData["EmailSuccess"] =
+        //                            "Email xác nhận đơn hàng đã được gửi!";
+        //                    }
+        //                    catch (Exception emailEx)
+        //                    {
+        //                        System.Diagnostics.Debug.WriteLine(
+        //                            $"❌ Lỗi gửi email: {emailEx.Message}"
+        //                        );
+        //                        TempData["EmailError"] =
+        //                            "Đặt hàng thành công nhưng không thể gửi email.";
+        //                    }
+
+        //                    // 9. Trang thành công
+        //                    return RedirectToAction("OrderSuccess", new { id = orderId });
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    transaction.Rollback();
+
+        //                    System.Diagnostics.Debug.WriteLine(
+        //                        $"❌ Lỗi checkout: {ex.Message}"
+        //                    );
+
+        //                    ModelState.AddModelError(
+        //                        "",
+        //                        "Có lỗi xảy ra khi xử lý đơn hàng: " + ex.Message
+        //                    );
+
+        //                    var cartItemsForView = db.GioHang
+        //                        .Where(c =>
+        //                            c.UserId == session.UserId &&
+        //                            selectedItems.Contains(c.GioHangId)
+        //                        )
+        //                        .ToList();
+
+        //                    ViewBag.CartItems = GetCartItemsViewModel(cartItemsForView);
+        //                    return View("Checkout", model);
+        //                }
+        //            }
+        //        }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Checkout(CheckoutViewModel model, string paymentMethod, string Note)
         {
             // 1. Kiểm tra đăng nhập
             var session = (UserLogin)Session[Commoncontent.user_sesion];
             if (session == null) return Redirect("/dang-nhap");
 
-            // 2. Lấy danh sách ID sản phẩm đã chọn từ Session (được lưu ở bước Checkoutselected)
+            // 2. Lấy danh sách sản phẩm đã chọn
             var selectedItems = Session["SelectedCartItems"] as int[];
             if (selectedItems == null || selectedItems.Length == 0)
             {
@@ -320,22 +491,23 @@ namespace WebsiteNoiThat.Controllers
                 return RedirectToAction("Index");
             }
 
-            // 3. Kiểm tra tính hợp lệ của dữ liệu nhập vào (Model Validation)
+            // 3. Validate dữ liệu
             if (!ModelState.IsValid)
             {
-                // Nếu dữ liệu sai, phải load lại thông tin giỏ hàng để hiển thị lại View
                 var cartItemsForView = db.GioHang
                     .Where(c => c.UserId == session.UserId && selectedItems.Contains(c.GioHangId))
                     .ToList();
-                ViewBag.CartItems = GetCartItemsViewModel(cartItemsForView); // Hàm helper convert sang ViewModel
-                return View("Checkout", model); // Trả về view Checkout kèm lỗi
+                ViewBag.CartItems = GetCartItemsViewModel(cartItemsForView);
+                return View("Checkout", model);
             }
 
-            using (var transaction = db.Database.BeginTransaction()) // Dùng Transaction để đảm bảo toàn vẹn dữ liệu
+            using (var transaction = db.Database.BeginTransaction())
             {
                 try
                 {
-                    // 4. TẠO ĐƠN HÀNG (ORDER)
+                    // ========================================
+                    // 4. TẠO ĐƠN HÀNG
+                    // ========================================
                     var order = new Order
                     {
                         UserId = session.UserId,
@@ -345,103 +517,201 @@ namespace WebsiteNoiThat.Controllers
                         ShipAddress = model.ShipAddress,
                         CreatedDate = DateTime.Now,
                         UpdateDate = DateTime.Now,
-                        StatusId = 1, // 1: Chờ xử lý/Mới tạo
-                        //TypePayment = string.IsNullOrEmpty(paymentMethod) ? 1 : (paymentMethod == "cod" ? 1 : 2) // Ví dụ: 1 là COD, 2 là Online
+                        StatusId = 1
                     };
 
-                    // Lưu Order để lấy OrderId
-                    int orderId = orderDao.Insert(order);
+                    db.Orders.Add(order);
 
-                    // 5. LẤY SẢN PHẨM TỪ DB ĐỂ TẠO ORDER DETAIL
+                    // ⚠️ TEST SAVE ORDER TRƯỚC
+                    try
+                    {
+                        db.SaveChanges();
+                        System.Diagnostics.Debug.WriteLine($"✅ Đã tạo Order #{order.OrderId}");
+                    }
+                    catch (Exception exOrder)
+                    {
+                        throw new Exception($"LỖI KHI TẠO ORDER: {GetFullErrorMessage(exOrder)}");
+                    }
+
+                    int orderId = order.OrderId;
+
+                    // ========================================
+                    // 5. LẤY SẢN PHẨM TỪ GIỎ HÀNG
+                    // ========================================
                     var cartItems = db.GioHang
                         .Where(c => c.UserId == session.UserId && selectedItems.Contains(c.GioHangId))
                         .ToList();
 
                     decimal totalAmount = 0;
 
+                    // ========================================
+                    // 6. TẠO CHI TIẾT ĐƠN HÀNG + TRỪ TỒN KHO
+                    // ========================================
                     foreach (var gh in cartItems)
                     {
-                        // Lấy thông tin sản phẩm và biến thể
                         var product = db.Products.Find(gh.ProductId);
                         var variant = gh.VariantId.HasValue ? db.ProductVariants.Find(gh.VariantId) : null;
 
-                        // Tính giá (ưu tiên giá biến thể -> giá thường)
-                        int currentPrice = (int)(variant?.SalePrice ?? variant?.Price ?? product.Price ?? 0);
+                        int currentPrice = (int)(variant?.SalePrice ?? variant?.Price ?? product?.Price ?? 0);
                         totalAmount += currentPrice * gh.Quantity;
 
-                        // Tạo chi tiết đơn hàng
-                        var detail = new OrderDetail
-                        {
-                            OrderId = orderId,
-                            ProductId = gh.ProductId,
-                            VariantId = gh.VariantId,
-                            VariantInfo = gh.VariantInfo, // Lưu lại thông tin màu/size
-                            Quantity = gh.Quantity,
-                            Price = currentPrice
-                        };
-                        orderDetailDao.Insert(detail);
-
-                        // 6. TRỪ TỒN KHO (QUAN TRỌNG)
+                        // ✅ KIỂM TRA TỒN KHO
                         if (variant != null)
                         {
                             if (variant.StockQuantity < gh.Quantity)
-                                throw new Exception($"Sản phẩm {product.Name} ({gh.VariantInfo}) không đủ số lượng tồn kho.");
+                                throw new Exception($"Sản phẩm {product?.Name ?? "N/A"} ({gh.VariantInfo}) không đủ tồn kho. Còn: {variant.StockQuantity}, Yêu cầu: {gh.Quantity}");
 
                             variant.StockQuantity -= gh.Quantity;
                         }
                         else if (product != null)
                         {
                             if (product.Quantity < gh.Quantity)
-                                throw new Exception($"Sản phẩm {product.Name} không đủ số lượng tồn kho.");
+                                throw new Exception($"Sản phẩm {product.Name} không đủ tồn kho. Còn: {product.Quantity}, Yêu cầu: {gh.Quantity}");
 
                             product.Quantity -= gh.Quantity;
                         }
+
+                        // ✅ TẠO ORDERDETAIL
+                        var detail = new OrderDetail
+                        {
+                            OrderId = orderId,
+                            ProductId = gh.ProductId,
+                            VariantId = gh.VariantId,
+                            VariantInfo = gh.VariantInfo,
+                            Quantity = gh.Quantity,
+                            Price = currentPrice
+                        };
+
+                        db.OrderDetails.Add(detail);
+                        System.Diagnostics.Debug.WriteLine($"  + Thêm OrderDetail: Product={gh.ProductId}, Variant={gh.VariantId}, Qty={gh.Quantity}");
                     }
 
-                    // 7. XÓA SẢN PHẨM ĐÃ MUA KHỎI GIỎ HÀNG
+                    // ========================================
+                    // 7. XÓA GIỎ HÀNG
+                    // ========================================
                     db.GioHang.RemoveRange(cartItems);
-                    db.SaveChanges();
 
-                    // Commit Transaction (Xác nhận lưu vào DB thành công)
-                    transaction.Commit();
-
-                    // Xóa Session chọn hàng
-                    Session.Remove("SelectedCartItems");
-
-                    // 8. GỬI EMAIL (Thực hiện sau khi lưu DB thành công)
+                    // ========================================
+                    // 8. LƯU TẤT CẢ (PHẦN QUAN TRỌNG NHẤT)
+                    // ========================================
                     try
                     {
-                        // Gọi hàm Helper gửi email đã định nghĩa trong Controller
-                        SendOrderEmail(orderId, model, cartItems, totalAmount, paymentMethod, Note);
+                        System.Diagnostics.Debug.WriteLine("⏳ Đang SaveChanges...");
+                        db.SaveChanges();
+                        System.Diagnostics.Debug.WriteLine("✅ SaveChanges thành công!");
+                    }
+                    catch (Exception exSave)
+                    {
+                        // 🔥 ĐÂY LÀ NƠI LỖI XẢY RA - HIỂN THỊ CHI TIẾT
+                        throw new Exception($"LỖI KHI SAVE DATABASE: {GetFullErrorMessage(exSave)}");
+                    }
+
+                    transaction.Commit();
+                    Session.Remove("SelectedCartItems");
+
+                    // ========================================
+                    // 9. GỬI EMAIL
+                    // ========================================
+                    try
+                    {
+                        SendOrderEmail(orderId, model,paymentMethod, Note);
                         TempData["EmailSuccess"] = "Email xác nhận đơn hàng đã được gửi!";
                     }
                     catch (Exception emailEx)
                     {
-                        // Log lỗi email nhưng KHÔNG revert đơn hàng (vì đơn hàng đã đặt thành công)
-                        System.Diagnostics.Debug.WriteLine($"❌ Lỗi gửi email: {emailEx.Message}");
-                        TempData["EmailError"] = "Đặt hàng thành công nhưng không thể gửi email xác nhận.";
+                        TempData["EmailError"] = "Đặt hàng thành công nhưng không thể gửi email.";
                     }
 
-                    // 9. CHUYỂN HƯỚNG VỀ TRANG THÀNH CÔNG
                     return RedirectToAction("OrderSuccess", new { id = orderId });
                 }
                 catch (Exception ex)
                 {
-                    // Nếu có lỗi trong quá trình lưu DB, Transaction sẽ Rollback (hủy bỏ các thay đổi)
                     transaction.Rollback();
 
-                    System.Diagnostics.Debug.WriteLine($"❌ Lỗi checkout: {ex.Message}");
-                    ModelState.AddModelError("", "Có lỗi xảy ra khi xử lý đơn hàng: " + ex.Message);
+                    // 🔥🔥🔥 HIỂN THỊ LỖI RA MÀN HÌNH 🔥🔥🔥
+                    string fullError = GetFullErrorMessage(ex);
 
-                    // Load lại view để user thấy lỗi
-                    var cartItemsForView = db.GioHang
-                        .Where(c => c.UserId == session.UserId && selectedItems.Contains(c.GioHangId))
-                        .ToList();
-                    ViewBag.CartItems = GetCartItemsViewModel(cartItemsForView);
+                    System.Diagnostics.Debug.WriteLine("❌❌❌❌❌❌❌❌❌❌");
+                    System.Diagnostics.Debug.WriteLine(fullError);
+                    System.Diagnostics.Debug.WriteLine("❌❌❌❌❌❌❌❌❌❌");
 
-                    return View("Checkout", model);
+                    // RETURN CONTENT TRỰC TIẾP - KHÔNG QUA VIEW
+                    return Content($@"
+<html>
+<head>
+    <meta charset='utf-8'/>
+    <title>LỖI CHECKOUT</title>
+    <style>
+        body {{ font-family: Arial; padding: 20px; background: #f5f5f5; }}
+        .error-box {{ background: white; border: 3px solid #dc3545; padding: 20px; border-radius: 8px; }}
+        .error-title {{ color: #dc3545; margin-top: 0; }}
+        .error-content {{ background: #f8f9fa; padding: 15px; font-family: 'Courier New', monospace; 
+                         white-space: pre-wrap; word-wrap: break-word; overflow-x: auto; 
+                         border: 1px solid #ddd; max-height: 500px; overflow-y: auto; }}
+        .btn {{ display: inline-block; margin-top: 20px; padding: 10px 20px; background: #007bff; 
+               color: white; text-decoration: none; border-radius: 5px; }}
+    </style>
+</head>
+<body>
+    <div class='error-box'>
+        <h1 class='error-title'>🔴 LỖI CHECKOUT - CHI TIẾT ĐẦY ĐỦ</h1>
+        <div class='error-content'>{System.Web.HttpUtility.HtmlEncode(fullError)}</div>
+        <a href='javascript:history.back()' class='btn'>← Quay lại</a>
+    </div>
+</body>
+</html>
+", "text/html");
                 }
             }
+        }
+
+        // 🔥 HÀM LẤY TOÀN BỘ LỖI (THÊM VÀO CONTROLLER)
+        private string GetFullErrorMessage(Exception ex)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("==============================================");
+            sb.AppendLine("           LỖI CHI TIẾT ĐẦY ĐỦ");
+            sb.AppendLine("==============================================");
+            sb.AppendLine();
+            sb.AppendLine($"📌 Loại lỗi: {ex.GetType().FullName}");
+            sb.AppendLine($"📌 Message: {ex.Message}");
+            sb.AppendLine();
+
+            // Lấy tất cả InnerException
+            var innerEx = ex.InnerException;
+            int level = 1;
+            while (innerEx != null)
+            {
+                sb.AppendLine($"--- InnerException cấp {level} ---");
+                sb.AppendLine($"Loại: {innerEx.GetType().FullName}");
+                sb.AppendLine($"Message: {innerEx.Message}");
+                sb.AppendLine();
+                innerEx = innerEx.InnerException;
+                level++;
+            }
+
+            // Kiểm tra DbEntityValidationException
+            if (ex is System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            {
+                sb.AppendLine("=== VALIDATION ERRORS ===");
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    sb.AppendLine($"Entity: {validationErrors.Entry.Entity.GetType().Name}");
+                    sb.AppendLine($"State: {validationErrors.Entry.State}");
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        sb.AppendLine($"  ❌ Property: {validationError.PropertyName}");
+                        sb.AppendLine($"     Error: {validationError.ErrorMessage}");
+                    }
+                    sb.AppendLine();
+                }
+            }
+
+            // Stack Trace
+            sb.AppendLine("=== STACK TRACE ===");
+            sb.AppendLine(ex.StackTrace);
+
+            return sb.ToString();
         }
         // ==============================
         // THANH TOÁN
@@ -469,7 +739,7 @@ namespace WebsiteNoiThat.Controllers
         //}
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public ActionResult Checkoutselected(int[] selectedItems)
         {
             var session = (UserLogin)Session[Commoncontent.user_sesion];
@@ -560,7 +830,7 @@ namespace WebsiteNoiThat.Controllers
         }
 
         //[HttpPost]
-        //[ValidateAntiForgeryToken]
+        //
         //public ActionResult Checkout(CheckoutViewModel model, string paymentMethod, string Note)
         //{
         //    var session = (UserLogin)Session[Commoncontent.user_sesion];
@@ -728,7 +998,152 @@ namespace WebsiteNoiThat.Controllers
         // ==============================
         // HÀM GỬI EMAIL
         // ==============================
-        private void SendOrderEmail(int orderId, CheckoutViewModel model, List<GioHang> cartItems, decimal totalAmount, string paymentMethod, string note)
+        //        private void SendOrderEmail(int orderId, CheckoutViewModel model, List<GioHang> cartItems, decimal totalAmount, string paymentMethod, string note)
+        //        {
+        //            try
+        //            {
+        //                // Validate email trước khi gửi
+        //                if (string.IsNullOrEmpty(model.ShipEmail))
+        //                {
+        //                    throw new Exception("Email người nhận không hợp lệ");
+        //                }
+
+        //                System.Diagnostics.Debug.WriteLine($"📧 Đang chuẩn bị email cho: {model.ShipEmail}");
+
+        //                // Tạo bảng sản phẩm HTML
+        //                StringBuilder productTable = new StringBuilder();
+        //                productTable.Append("<table style='width:100%; border-collapse: collapse; margin: 20px 0;'>");
+        //                productTable.Append("<thead><tr style='background: #8B4513; color: white;'>");
+        //                productTable.Append("<th style='padding: 12px; text-align: left; border: 1px solid #ddd;'>Sản phẩm</th>");
+        //                productTable.Append("<th style='padding: 12px; text-align: center; border: 1px solid #ddd;'>SL</th>");
+        //                productTable.Append("<th style='padding: 12px; text-align: right; border: 1px solid #ddd;'>Đơn giá</th>");
+        //                productTable.Append("<th style='padding: 12px; text-align: right; border: 1px solid #ddd;'>Thành tiền</th>");
+        //                productTable.Append("</tr></thead><tbody>");
+
+        //                foreach (var item in cartItems)
+        //                {
+        //                    var product = db.Products.Find(item.ProductId);
+        //                    var variant = item.VariantId.HasValue ? db.ProductVariants.Find(item.VariantId) : null;
+        //                    int price = (int)(variant?.SalePrice ?? variant?.Price ?? product.Price ?? 0);
+        //                    int subtotal = price * item.Quantity;
+
+        //                    productTable.Append("<tr style='border-bottom: 1px solid #ddd;'>");
+        //                    productTable.Append($"<td style='padding: 12px;'><strong>{product.Name}</strong>");
+
+        //                    if (!string.IsNullOrEmpty(item.VariantInfo) && item.VariantInfo != "Mặc định")
+        //                    {
+        //                        productTable.Append($"<br/><small style='color: #666;'>{item.VariantInfo}</small>");
+        //                    }
+
+        //                    productTable.Append("</td>");
+        //                    productTable.Append($"<td style='padding: 12px; text-align: center;'>{item.Quantity}</td>");
+        //                    productTable.Append($"<td style='padding: 12px; text-align: right;'>{price:N0}₫</td>");
+        //                    productTable.Append($"<td style='padding: 12px; text-align: right; font-weight: bold; color: #ee4d2d;'>{subtotal:N0}₫</td>");
+        //                    productTable.Append("</tr>");
+        //                }
+
+        //                productTable.Append("</tbody></table>");
+
+        //                // Xử lý phương thức thanh toán
+        //                string paymentMethodText = "💵 Thanh toán khi nhận hàng (COD)";
+        //                if (paymentMethod == "bank") paymentMethodText = "🏦 Chuyển khoản ngân hàng";
+        //                else if (paymentMethod == "momo") paymentMethodText = "📱 Ví điện tử MoMo";
+
+        //                // Tạo nội dung email
+        //                string emailBody = $@"
+        //<!DOCTYPE html>
+        //<html>
+        //<head>
+        //    <meta charset='utf-8'>
+        //</head>
+        //<body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;'>
+        //    <div style='max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9;'>
+        //        <div style='background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;'>
+        //            <h1 style='margin: 0;'>CỬA HÀNG CÂY CẢNH ANH VŨ</h1>
+        //            <p style='margin: 10px 0 0 0;'>Cảm ơn bạn đã đặt hàng!</p>
+        //        </div>
+
+        //        <div style='background: white; padding: 30px; border-radius: 0 0 8px 8px;'>
+        //            <h2 style='color: #8B4513; border-bottom: 2px solid #8B4513; padding-bottom: 10px;'>
+        //                Chi tiết đơn hàng #{orderId}
+        //            </h2>
+
+        //            <div style='background: #f8f9fa; padding: 15px; border-left: 4px solid #8B4513; margin: 20px 0;'>
+        //                <p style='margin: 5px 0;'><strong>👤 Tên khách hàng:</strong> {model.ShipName}</p>
+        //                <p style='margin: 5px 0;'><strong>📞 Điện thoại:</strong> {model.ShipPhone}</p>
+        //                <p style='margin: 5px 0;'><strong>✉️ Email:</strong> {model.ShipEmail}</p>
+        //                <p style='margin: 5px 0;'><strong>📍 Địa chỉ:</strong> {model.ShipAddress}</p>
+        //                <p style='margin: 5px 0;'><strong>💳 Thanh toán:</strong> {paymentMethodText}</p>
+        //                {(!string.IsNullOrEmpty(note) ? $"<p style='margin: 5px 0;'><strong>📝 Ghi chú:</strong> {note}</p>" : "")}
+        //                <p style='margin: 5px 0;'><strong>🕐 Thời gian:</strong> {DateTime.Now:dd/MM/yyyy HH:mm}</p>
+        //            </div>
+
+        //            <h3 style='color: #8B4513; margin-top: 30px;'>📦 Sản phẩm đã đặt</h3>
+        //            {productTable}
+
+        //            <div style='background: #fff5f5; padding: 20px; text-align: right; border-radius: 8px; margin-top: 20px;'>
+        //                <p style='margin: 0 0 10px 0; font-size: 16px;'>Tổng thanh toán:</p>
+        //                <p style='margin: 0; font-size: 24px; color: #ee4d2d; font-weight: bold;'>{totalAmount:N0}₫</p>
+        //            </div>
+
+        //            <div style='background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 20px;'>
+        //                <p style='margin: 0; color: #2e7d32;'><strong>✅ Đơn hàng đã được tiếp nhận!</strong></p>
+        //                <p style='margin: 10px 0 0 0; font-size: 14px;'>Chúng tôi sẽ liên hệ với bạn sớm nhất để xác nhận.</p>
+        //            </div>
+        //        </div>
+
+        //        <div style='text-align: center; padding: 20px; color: #666; font-size: 14px;'>
+        //            <p style='margin: 5px 0;'><strong>📞 Hotline:</strong> 0964 155 923</p>
+        //            <p style='margin: 5px 0;'><strong>✉️ Email:</strong> daoanhvu3001@gmail.com</p>
+        //        </div>
+        //    </div>
+        //</body>
+        //</html>";
+
+        //                System.Diagnostics.Debug.WriteLine("📧 Đang tạo MailMessage...");
+
+        //                // Tạo email message
+        //                MailMessage mail = new MailMessage();
+        //                mail.From = new MailAddress("daoanhvu3001@gmail.com", "Cây Cảnh Anh Vũ");
+        //                mail.To.Add(model.ShipEmail);
+        //                mail.Subject = $"Xác nhận đơn hàng #{orderId} - Cây Cảnh Anh Vũ";
+        //                mail.Body = emailBody;
+        //                mail.IsBodyHtml = true;
+        //                mail.BodyEncoding = Encoding.UTF8;
+        //                mail.SubjectEncoding = Encoding.UTF8;
+
+        //                System.Diagnostics.Debug.WriteLine("📧 Đang cấu hình SMTP...");
+
+        //                // Cấu hình SMTP
+        //                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+        //                smtp.Credentials = new NetworkCredential("daoanhvu3001@gmail.com", "hiru wrwo jcrl emit");
+        //                smtp.EnableSsl = true;
+        //                smtp.Timeout = 30000; // 30 seconds timeout
+
+        //                System.Diagnostics.Debug.WriteLine("📧 Đang gửi email...");
+
+        //                // Gửi email
+        //                smtp.Send(mail);
+
+        //                System.Diagnostics.Debug.WriteLine($"✅ Email đã gửi thành công đến: {model.ShipEmail}");
+        //            }
+        //            catch (SmtpException smtpEx)
+        //            {
+        //                System.Diagnostics.Debug.WriteLine($"❌ SMTP Error: {smtpEx.Message}");
+        //                System.Diagnostics.Debug.WriteLine($"❌ Status Code: {smtpEx.StatusCode}");
+        //                throw new Exception($"Lỗi SMTP: {smtpEx.Message} (Code: {smtpEx.StatusCode})");
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                System.Diagnostics.Debug.WriteLine($"❌ General Email Error: {ex.Message}");
+        //                System.Diagnostics.Debug.WriteLine($"❌ Stack: {ex.StackTrace}");
+        //                throw new Exception($"Lỗi gửi email: {ex.Message}");
+        //            }
+        //        }
+        // ==============================
+        // HÀM GỬI EMAIL - ĐÃ SỬA
+        // ==============================
+        private void SendOrderEmail(int orderId, CheckoutViewModel model, string paymentMethod, string note)
         {
             try
             {
@@ -740,6 +1155,12 @@ namespace WebsiteNoiThat.Controllers
 
                 System.Diagnostics.Debug.WriteLine($"📧 Đang chuẩn bị email cho: {model.ShipEmail}");
 
+                // ✅ LẤY DỮ LIỆU TỪ ORDER & ORDERDETAIL ĐÃ LƯU
+                var order = db.Orders.Find(orderId);
+                var orderDetails = db.OrderDetails
+                    .Where(od => od.OrderId == orderId)
+                    .ToList();
+
                 // Tạo bảng sản phẩm HTML
                 StringBuilder productTable = new StringBuilder();
                 productTable.Append("<table style='width:100%; border-collapse: collapse; margin: 20px 0;'>");
@@ -750,23 +1171,29 @@ namespace WebsiteNoiThat.Controllers
                 productTable.Append("<th style='padding: 12px; text-align: right; border: 1px solid #ddd;'>Thành tiền</th>");
                 productTable.Append("</tr></thead><tbody>");
 
-                foreach (var item in cartItems)
+                decimal totalAmount = 0;
+
+                // ✅ DUYỆT QUA ORDERDETAIL - GIÁ ĐÃ ĐÚNG TỪ LÚC LƯU
+                foreach (var od in orderDetails)
                 {
-                    var product = db.Products.Find(item.ProductId);
-                    var variant = item.VariantId.HasValue ? db.ProductVariants.Find(item.VariantId) : null;
-                    int price = (int)(variant?.SalePrice ?? variant?.Price ?? product.Price ?? 0);
-                    int subtotal = price * item.Quantity;
+                    var product = db.Products.Find(od.ProductId);
+
+                    // ✅ SỬ DỤNG GIÁ ĐÃ LƯU TRONG ORDERDETAIL
+                    int price = (int)od.Price;
+                    int quantity = (int)od.Quantity;
+                    decimal subtotal = od.Price * od.Quantity ?? 0;
+                    totalAmount += subtotal;
 
                     productTable.Append("<tr style='border-bottom: 1px solid #ddd;'>");
-                    productTable.Append($"<td style='padding: 12px;'><strong>{product.Name}</strong>");
+                    productTable.Append($"<td style='padding: 12px;'><strong>{product?.Name ?? "N/A"}</strong>");
 
-                    if (!string.IsNullOrEmpty(item.VariantInfo) && item.VariantInfo != "Mặc định")
+                    if (!string.IsNullOrEmpty(od.VariantInfo) && od.VariantInfo != "Mặc định")
                     {
-                        productTable.Append($"<br/><small style='color: #666;'>{item.VariantInfo}</small>");
+                        productTable.Append($"<br/><small style='color: #666;'>{od.VariantInfo}</small>");
                     }
 
                     productTable.Append("</td>");
-                    productTable.Append($"<td style='padding: 12px; text-align: center;'>{item.Quantity}</td>");
+                    productTable.Append($"<td style='padding: 12px; text-align: center;'>{quantity}</td>");
                     productTable.Append($"<td style='padding: 12px; text-align: right;'>{price:N0}₫</td>");
                     productTable.Append($"<td style='padding: 12px; text-align: right; font-weight: bold; color: #ee4d2d;'>{subtotal:N0}₫</td>");
                     productTable.Append("</tr>");
@@ -870,7 +1297,6 @@ namespace WebsiteNoiThat.Controllers
                 throw new Exception($"Lỗi gửi email: {ex.Message}");
             }
         }
-
         // ==============================
         // TEST EMAIL (Dùng để debug)
         // ==============================
@@ -1046,7 +1472,7 @@ namespace WebsiteNoiThat.Controllers
             return list;
         }
         //[HttpPost]
-        //[ValidateAntiForgeryToken]
+        //
         //public ActionResult Checkout(CheckoutViewModel model)
         //{
         //    if (ModelState.IsValid)
@@ -1116,92 +1542,191 @@ namespace WebsiteNoiThat.Controllers
         //    return View(model);
         //}
 
+
+
+
         // ==============================
         // LỊCH SỬ ĐƠN HÀNG
         // ==============================
         public ActionResult HistoryCart()
         {
-            var session = (UserLogin)Session[Commoncontent.user_sesion];
-            if (session == null) return Redirect("/dang-nhap");
+            try
+            {
+                var session = (UserLogin)Session[Commoncontent.user_sesion];
 
-            var orders = db.Orders
-                .Where(o => o.UserId == session.UserId)
-                .OrderByDescending(o => o.CreatedDate ?? DateTime.MinValue)
-                .ToList();
+                // Debug: Kiểm tra session
+                System.Diagnostics.Debug.WriteLine("=== HistoryCart ===");
+                System.Diagnostics.Debug.WriteLine($"Session: {(session != null ? "OK" : "NULL")}");
 
-            return View(orders);
+                if (session == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("⚠️ Session NULL - Redirect to login");
+                    return Redirect("/dang-nhap");
+                }
+
+                System.Diagnostics.Debug.WriteLine($"UserId: {session.UserId}");
+
+                // Lấy đơn hàng
+                var orders = db.Orders
+                    .Where(o => o.UserId == session.UserId)
+                    .OrderByDescending(o => o.CreatedDate ?? DateTime.MinValue)
+                    .ToList();
+
+                System.Diagnostics.Debug.WriteLine($"Số đơn hàng tìm thấy: {orders.Count}");
+
+                // Debug: In thông tin từng đơn
+                foreach (var order in orders)
+                {
+                    System.Diagnostics.Debug.WriteLine($"  Order #{order.OrderId}, Status: {order.StatusId}, Date: {order.CreatedDate}");
+                }
+
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ LỖI HistoryCart: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack: {ex.StackTrace}");
+                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
         }
 
+        // ==============================
+        // CHI TIẾT ĐƠN HÀNG
+        // ==============================
         public ActionResult OrderDetail(int id)
         {
-            var session = (UserLogin)Session[Commoncontent.user_sesion];
-            if (session == null) return Redirect("/dang-nhap");
-
-            var order = db.Orders.FirstOrDefault(o => o.OrderId == id && o.UserId == session.UserId);
-            if (order == null) return HttpNotFound();
-
-            var orderDetails = (from od in db.OrderDetails
-                                join p in db.Products on od.ProductId equals p.ProductId
-                                where od.OrderId == id
-                                select new OrderDetailViewModel
-                                {
-                                    ProductName = p.Name,
-                                    VariantInfo = od.VariantInfo ?? "Mặc định",
-                                    Quantity = (int)od.Quantity,
-                                    Price = (int)od.Price,
-                                    Total = od.Price * od.Quantity ?? 0
-                                }).ToList();
-
-            var model = new OrderSuccessViewModel
+            try
             {
-                Order = order,
-                OrderDetails = orderDetails,
-                Total = orderDetails.Sum(x => x.Total)
-            };
+                var session = (UserLogin)Session[Commoncontent.user_sesion];
 
-            return View(model);
+                System.Diagnostics.Debug.WriteLine($"=== OrderDetail: {id} ===");
+                System.Diagnostics.Debug.WriteLine($"Session: {(session != null ? "OK" : "NULL")}");
+
+                if (session == null) return Redirect("/dang-nhap");
+
+                System.Diagnostics.Debug.WriteLine($"UserId: {session.UserId}");
+
+                // Kiểm tra đơn hàng
+                var order = db.Orders.FirstOrDefault(o => o.OrderId == id && o.UserId == session.UserId);
+
+                System.Diagnostics.Debug.WriteLine($"Order found: {(order != null ? "YES" : "NO")}");
+
+                if (order == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("⚠️ Order not found or unauthorized");
+                    TempData["Error"] = "Không tìm thấy đơn hàng hoặc bạn không có quyền xem đơn hàng này.";
+                    return RedirectToAction("HistoryCart");
+                }
+
+                // Lấy chi tiết
+                var orderDetails = (from od in db.OrderDetails
+                                    join p in db.Products on od.ProductId equals p.ProductId
+                                    where od.OrderId == id
+                                    select new OrderDetailViewModel
+                                    {
+                                        ProductName = p.Name,
+                                        VariantInfo = od.VariantInfo ?? "Mặc định",
+                                        Quantity = (int)od.Quantity,
+                                        Price = (int)od.Price,
+                                        Total = od.Price * od.Quantity ?? 0
+                                    }).ToList();
+
+                System.Diagnostics.Debug.WriteLine($"Số sản phẩm: {orderDetails.Count}");
+
+                var model = new OrderSuccessViewModel
+                {
+                    Order = order,
+                    OrderDetails = orderDetails,
+                    Total = orderDetails.Sum(x => x.Total)
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ LỖI OrderDetail: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack: {ex.StackTrace}");
+                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                return RedirectToAction("HistoryCart");
+            }
         }
 
+        // ==============================
+        // HỦY ĐƠN HÀNG
+        // ==============================
         [HttpPost]
+       
         public ActionResult CancelOrder(int id)
         {
-            var session = (UserLogin)Session[Commoncontent.user_sesion];
-            if (session == null) return Json(new { success = false, message = "Vui lòng đăng nhập" });
-
-            var order = db.Orders.FirstOrDefault(o => o.OrderId == id && o.UserId == session.UserId);
-            if (order == null) return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
-
-            if (order.StatusId != 1)
+            try
             {
-                return Json(new { success = false, message = "Không thể huỷ đơn hàng này" });
-            }
+                var session = (UserLogin)Session[Commoncontent.user_sesion];
+                if (session == null)
+                    return Json(new { success = false, message = "Vui lòng đăng nhập" });
 
-            var orderDetails = db.OrderDetails.Where(od => od.OrderId == id).ToList();
-            foreach (var od in orderDetails)
-            {
-                if (od.VariantId.HasValue)
+                // ✅ Kiểm tra đơn hàng thuộc user
+                var order = db.Orders.FirstOrDefault(o => o.OrderId == id && o.UserId == session.UserId);
+                if (order == null)
+                    return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
+
+                // ✅ Chỉ cho phép hủy đơn hàng "Đã tiếp nhận" (StatusId = 1)
+                if (order.StatusId != 1)
                 {
-                    var variant = db.ProductVariants.Find(od.VariantId);
-                    if (variant != null)
+                    return Json(new { success = false, message = "Chỉ có thể hủy đơn hàng đang chờ xử lý" });
+                }
+
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
                     {
-                        variant.StockQuantity += od.Quantity;
+                        // ✅ Hoàn lại số lượng tồn kho
+                        var orderDetails = db.OrderDetails.Where(od => od.OrderId == id).ToList();
+                        foreach (var od in orderDetails)
+                        {
+                            if (od.VariantId.HasValue)
+                            {
+                                var variant = db.ProductVariants.Find(od.VariantId);
+                                if (variant != null)
+                                {
+                                    variant.StockQuantity += od.Quantity;
+                                    System.Diagnostics.Debug.WriteLine($"✅ Hoàn lại variant {od.VariantId}: +{od.Quantity}");
+                                }
+                            }
+                            else
+                            {
+                                var product = db.Products.Find(od.ProductId);
+                                if (product != null)
+                                {
+                                    product.Quantity += od.Quantity;
+                                    System.Diagnostics.Debug.WriteLine($"✅ Hoàn lại product {od.ProductId}: +{od.Quantity}");
+                                }
+                            }
+                        }
+
+                        // ✅ Cập nhật trạng thái đơn hàng
+                        order.StatusId = 5; // 5 = Đã hủy
+                        order.UpdateDate = DateTime.Now;
+                        db.SaveChanges();
+
+                        transaction.Commit();
+
+                        System.Diagnostics.Debug.WriteLine($"✅ Đã hủy đơn hàng #{id}");
+                        return Json(new { success = true, message = "Hủy đơn hàng thành công" });
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        System.Diagnostics.Debug.WriteLine($"❌ Lỗi hủy đơn: {ex.Message}");
+                        return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
                     }
                 }
-                else
-                {
-                    var product = db.Products.Find(od.ProductId);
-                    if (product != null)
-                    {
-                        product.Quantity += od.Quantity;
-                    }
-                }
             }
-
-            order.StatusId = 5;
-            order.UpdateDate = DateTime.Now;
-            db.SaveChanges();
-
-            return Json(new { success = true, message = "Huỷ đơn hàng thành công" });
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Lỗi CancelOrder: {ex.Message}");
+                return Json(new { success = false, message = "Lỗi hệ thống: " + ex.Message });
+            }
         }
 
         protected override void Dispose(bool disposing)

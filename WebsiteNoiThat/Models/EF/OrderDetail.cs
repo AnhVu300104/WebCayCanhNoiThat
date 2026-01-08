@@ -41,12 +41,12 @@
         public virtual ProductVariant Variant { get; set; }
 
         // Các thuộc tính điều hướng cũ (nếu cần thiết cho việc truy vấn ngược)
-        /*
+        
         [ForeignKey("OrderId")]
         public virtual Order Order { get; set; }
 
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; }
-        */
+        
     }
 }

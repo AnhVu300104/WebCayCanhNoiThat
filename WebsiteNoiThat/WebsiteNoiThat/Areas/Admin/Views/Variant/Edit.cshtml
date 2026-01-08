@@ -48,13 +48,35 @@
 
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label class="font-weight-bold">Giá bán gốc</label>
-                                @Html.TextBoxFor(m => m.Price, new { @class = "form-control", @type = "number", @min = "0", @required = "required" })
+                                <label class="font-weight-bold">
+                                    Giá gốc (tham chiếu)
+                                </label>
+                                @Html.TextBoxFor(m => m.Price, new
+                                {
+                                    @class = "form-control",
+                                    @type = "number",
+                                    @min = "0",
+                                    @step = "1000"
+                                })
+                                <small class="form-text text-muted">
+                                    📌 Giá tham chiếu từ SP gốc
+                                </small>
                             </div>
                             <div class="col-md-6">
-                                <label class="font-weight-bold">Giá khuyến mãi</label>
-                                @Html.TextBoxFor(m => m.SalePrice, new { @class = "form-control", @type = "number", @min = "0" })
-                                <small class="text-muted">Để 0 nếu không giảm.</small>
+                                <label class="font-weight-bold">
+                                    Giá bán biến thể này <span class="text-danger">*</span>
+                                </label>
+                                @Html.TextBoxFor(m => m.SalePrice, new
+                                {
+                                    @class = "form-control",
+                                    @type = "number",
+                                    @min = "0",
+                                    @step = "1000",
+                                    @required = "required"
+                                })
+                                <small class="text-success font-weight-bold">
+                                    💰 Giá thực tế bán ra (có thể > = < giá gốc)
+                                </small>
                             </div>
                         </div>
 
@@ -68,7 +90,6 @@
                             </small>
                         </div>
 
-                        <!-- ===== THÊM MỚI: Chọn kho ===== -->
                         <div class="form-group">
                             <label class="font-weight-bold">
                                 <i class="fas fa-warehouse text-info"></i> Kho hàng
@@ -80,7 +101,7 @@
                                     foreach (var wh in warehouses)
                                     {
                                         <option value="@wh.WarehouseId" @(Model.WarehouseId == wh.WarehouseId ? "selected" : "")>
-                                            @wh.Code - @wh.Name 
+                                            @wh.Code - @wh.Name
                                         </option>
                                     }
                                 }
@@ -184,5 +205,25 @@
                 $(input).next('.custom-file-label').html(file.name);
             }
         }
+
+        // ✅ Validation: Giá bán biến thể phải > 0
+        $('form').on('submit', function (e) {
+            var salePrice = parseFloat($('[name="SalePrice"]').val()) || 0;
+
+            if (salePrice <= 0) {
+                e.preventDefault();
+                alert('⚠️ Vui lòng nhập giá bán cho biến thể này!');
+                $('[name="SalePrice"]').focus();
+                return false;
+            }
+        });
+
+        // Real-time format số khi nhập
+        $('[name="Price"], [name="SalePrice"]').on('blur', function () {
+            var val = $(this).val();
+            if (val && !isNaN(val)) {
+                $(this).val(parseInt(val));
+            }
+        });
     </script>
 }

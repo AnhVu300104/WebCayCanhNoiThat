@@ -44,7 +44,6 @@
                         Mã SP gốc: SP@(product.ProductId) |
                         Tổng tồn kho: @ViewBag.TotalStock
 
-                        @* ===== HIỂN THỊ LỖI NẾU CÓ ===== *@
                         @if (ViewBag.StockError != null)
                         {
                             <div class="alert alert-danger mt-2">
@@ -117,17 +116,27 @@
                                         }
                                     </td>
                                     <td>
-                                        @if (item.SalePrice > 0 && item.SalePrice < item.Price)
+                                        @* ✅ LOGIC MỚI: Hiển thị SalePrice (giá bán thực tế) *@
+                                        @if (item.SalePrice > 0)
                                         {
-                                            <div class="text-danger font-weight-bold">@string.Format("{0:N0}₫", item.SalePrice)</div>
-                                            <div class="text-muted small" style="text-decoration: line-through;">@string.Format("{0:N0}₫", item.Price)</div>
+                                            <div class="font-weight-bold text-primary">
+                                                @string.Format("{0:N0}₫", item.SalePrice)
+                                            </div>
+
+                                            @* Hiển thị giá tham chiếu nếu khác giá bán *@
+                                            if (item.Price > 0 && item.Price != item.SalePrice)
+                                            {
+                                                <small class="text-muted">
+                                                    (Giá gốc: @string.Format("{0:N0}₫", item.Price))
+                                                </small>
+                                            }
                                         }
                                         else
                                         {
+                                            @* Fallback về Price nếu chưa set SalePrice *@
                                             <div class="font-weight-bold">@string.Format("{0:N0}₫", item.Price)</div>
                                         }
                                     </td>
-                                    <!-- ===== THÊM MỚI: Hiển thị tên kho ===== -->
                                     <td>
                                         @if (item.Warehouse != null)
                                         {
